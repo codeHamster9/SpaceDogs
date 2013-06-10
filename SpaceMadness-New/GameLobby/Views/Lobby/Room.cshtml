@@ -1,0 +1,54 @@
+﻿@model GameLobby.Models.Room
+
+@{
+    ViewBag.Title = "Room";
+}
+
+<h2>Room</h2>
+
+<fieldset>
+    <legend>Room</legend>
+
+@*    <div class="display-label">
+        @Html.DisplayNameFor(model => model.MaxNumPlayersInRoom)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.MaxNumPlayersInRoom)
+    </div>
+
+    <div class="display-label">
+        @Html.DisplayNameFor(model => model.NumPlayersInRomm)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.NumPlayersInRomm)
+    </div>*@
+
+    <table>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.players[0].UserID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.players[0].UserRank)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model.players)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(i => item.UserID)
+                </td>
+                <td>
+                    @Html.DisplayFor(i => item.UserRank)
+                </td>
+            </tr>
+        }
+    </table>
+</fieldset>
+<p>
+    @Html.ActionLink("Ready", "Ready", new { roomId = Model.RoomID, userId = this.Session["userId"] }) |
+   @* <span>state</span><span>@Model.players.Where(p => p.UserID.Equals(ViewBag.userId)).First().state</span>*@
+    @Html.ActionLink("Back to Lobby", "JoinLobby", new { roomId = Model.RoomID, userId = ViewBag.userId })  @* TODO: remove from current room !!!!! *@
+</p>

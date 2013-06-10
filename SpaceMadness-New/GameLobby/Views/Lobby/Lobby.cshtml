@@ -1,0 +1,47 @@
+﻿@model IEnumerable<GameLobby.Models.Room>
+
+@{
+    ViewBag.Title = "Lobby";
+}
+<script src="~/Scripts/jquery-1.8.2.min.js"></script>
+<script>
+    $(function() {
+        window.setTimeout('refreshRooms()', 0);
+    });
+
+    function refreshRooms() {
+        $.ajax({
+            type: 'GET',
+            url: '/Lobby/UpdateRooms',
+            success: function (data) {
+                $("#roomsDiv").html(data);
+                window.setTimeout('refreshRooms()', 5000);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                //     $("#notice_div").html('Timeout contacting server..');
+                console.log(errorThrown + "_" + textStatus);
+                window.setTimeout('refreshRooms()', 10000);
+            }
+        });
+    }
+
+
+</script>
+<h2>@ViewBag.Title</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table>
+    <tr>
+        <th>
+            <p>Players</p>
+        </th>
+        @*<th>
+            @Html.DisplayNameFor(model => model.NumPlayersInRomm)
+        </th>*@
+        <th></th>
+    </tr>
+</table>
+    <table id="roomsDiv"></table>
+

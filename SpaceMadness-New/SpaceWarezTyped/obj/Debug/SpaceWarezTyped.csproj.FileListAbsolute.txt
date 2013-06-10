@@ -1,0 +1,17 @@
+C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\bin\SpaceWarezTyped.dll
+C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\bin\SpaceWarezTyped.pdb
+C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\bin\Microsoft.AspNet.SignalR.Core.dll
+C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\bin\Microsoft.AspNet.SignalR.Owin.dll
+C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\bin\Microsoft.AspNet.SignalR.SystemWeb.dll
+C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\bin\Microsoft.Owin.Host.SystemWeb.dll
+C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\bin\Microsoft.Web.Infrastructure.dll
+C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\bin\Newtonsoft.Json.dll
+C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\bin\Owin.dll
+C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\bin\Microsoft.AspNet.SignalR.Core.xml
+C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\bin\Microsoft.AspNet.SignalR.Owin.xml
+C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\bin\Microsoft.AspNet.SignalR.SystemWeb.xml
+C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\bin\Microsoft.Owin.Host.SystemWeb.xml
+C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\bin\Newtonsoft.Json.xml
+C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\obj\Debug\SpaceWarezTyped.dll
+C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\obj\Debug\SpaceWarezTyped.pdb
+C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\obj\Debug\SpaceWarezTyped.csprojResolveAssemblyReference.cache
