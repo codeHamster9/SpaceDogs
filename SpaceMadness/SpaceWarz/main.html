@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <script src="Scripts/date.js" type="text/javascript"></script>
+    <script src="Scripts/jquery-2.0.0.min.js"></script>
+    <script src="Scripts/jquery.signalR-1.0.1.min.js"></script>
+    <script src="signalr/hubs" type="text/javascript"></script>
+    <script src="Scripts/moment.js"></script>
+    <script src="Scripts/main.js"></script>
+</head>
+<body>
+    <canvas id="myCanvas" width="900" height="500"></canvas>
+    <br />
+    <br />
+    <input type="button" disabled="disabled" value="Start Game" onclick="readyToPlay()" />
+    <input type="button" value="Leave Game" disabled="disabled" onclick="leaveGame()" />
+    <br />
+    <br />
+    <div style="background-color: lightgray">
+        <label id="ClientMessages" style="font-family: 'Courier New', Courier, 'Nimbus Mono L', monospace; font-size: xx-large; font-weight: 400"></label>
+    </div>
+    
+</body>
+</html>
