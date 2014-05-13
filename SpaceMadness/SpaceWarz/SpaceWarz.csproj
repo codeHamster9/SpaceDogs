@@ -88,8 +88,10 @@
   <ItemGroup>
     <Content Include="core\bonusItem.js" />
     <Content Include="core\bumpFX.js" />
+    <Content Include="core\core.js" />
     <Content Include="core\drunkFX.js" />
     <Content Include="core\effects.js" />
+    <Content Include="core\shieldFX.js" />
     <Content Include="core\ship.js" />
     <Content Include="core\shrinkEffect.js" />
     <Content Include="core\spacerock.js" />
@@ -185,7 +187,7 @@
     <Content Include="Scripts\jquery-2.0.0.min.map" />
     <Content Include="Scripts\jquery.signalR-1.0.1.js" />
     <Content Include="Scripts\jquery.signalR-1.0.1.min.js" />
-    <Content Include="core\main.js" />
+    <Content Include="Scripts\main.js" />
     <Content Include="Scripts\moment.js" />
     <Content Include="Web.config" />
   </ItemGroup>

@@ -1,0 +1,17 @@
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\SpaceWarz.dll.config
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\SpaceWarz.dll
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\SpaceWarz.pdb
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.AspNet.SignalR.Core.dll
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.AspNet.SignalR.Owin.dll
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.AspNet.SignalR.SystemWeb.dll
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.Owin.Host.SystemWeb.dll
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Newtonsoft.Json.dll
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Owin.dll
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.AspNet.SignalR.Core.xml
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.AspNet.SignalR.Owin.xml
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.AspNet.SignalR.SystemWeb.xml
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.Owin.Host.SystemWeb.xml
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Newtonsoft.Json.xml
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\obj\Debug\SpaceWarz.dll
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\obj\Debug\SpaceWarz.pdb

@@ -1,65 +1,158 @@
-﻿//#region variables
-//#region Globals
-var canvas;
-var context;
-var hub;
-var imageObjBackground = new Image();
-var imageRock = new Image();
-var imageBonus = new Image();
+﻿var engine;
+(function (engine) {
 
-// background value's
-var backgroundVelocity = 0;
-var backGroundX = 840;
-var backGroundY = 440;
+    var core = (function () {
 
-var Damage_MAX = 420;
-var Hit_Value = 35;
+        function Core() {
+            this.globals = {
+                canvas: null,
+                context: null,
+                imageObjBackground: new Image(),
+                imageRock: new Image(),
+                imageBonus: new Image(),
 
-// value's for the bonus
-var frameCounter = 0;
-var bonusArr = [];
+                // background value's
+                backgroundVelocity: 0,
+                backGroundX: 840,
+                backGroundY: 440,
 
-// value's for rotate the rock's
-var TO_RADIANS = Math.PI / 180;
+                Damage_MAX: 420,
+                Hit_Value: 35,
 
-var explosionArray = [];
-var rocksArr = [];
-var shipTransform = [];
+                // value's for the bonus
+                frameCounter: 0,
+                bonusArr: [],
 
-var myShip, wingMan;
-var scorePlayer2 = 0, scorePlayer1 = 0;
+                // value's for rotate the rock's
+                TO_RADIANS: Math.PI / 180,
 
-var CountdownTimer = 2;
-var IsGameStarted = false;
-var isReadyToExit = false;
-var userId;
-var roomId;
-var FPS = 0;
-var backGroundSpeed = 0;
-var onScreenText = "";
-var isHelmsLocked = false;
-//#endregion
+                explosionArray: [],
+                rocksArr: [],
+                shipTransform: [],
 
-//#region Objects
+                scorePlayer2: 0,
+                scorePlayer1: 0,
+                player1Ship: null,
+                player2Ship: null,
+                CountdownTimer: 2,
+                IsGameStarted: false,
+                isReadyToExit: false,
+                isHelmsLocked: false,
+                userId: null,
+                roomId: null,
+                FPS: 1000 / 60,
+                backGroundSpeed: 2,
+                onScreenText: ""
+            };
+            this.hub = null;
+        }
+        return Core;
 
+    }());
 
+    core.prototype.initPlayers = function () {
+        this.globals.player1Ship = new engine.ship('player',200,430,120,120);
+        this.globals.player1Ship.image.src = 'Images/spaceship1.png';
 
+        // Player 2
+        this.globals.player2Ship = new engine.ship('wingman',700,430,60,60);
+        this.globals.player2Ship.image.src = 'Images/spaceship2.png';
+    };
 
-//#endregion
+    core.prototype.initAnimations = function () {
+        var i,j,k;
+        for  (i = 0; i < 7 * 5; i++) {
+            core.globals.explosionArray[i] = {
+                image: new Image()
+            };
 
-//#endregion
+            core.globals.explosionArray[i].image.src = "Images/Frames/e" + (j + 1) + ".png";
+            if (i % 5 === 0) {
+                j++;
+            }
+        }
+
+        for (var i = 0; i < 35 * 1; i++) {
+            shipTransform[i] = {
+                image: new Image()
+            };
+
+            shipTransform[i].image.src = "Images/New ship/tmp-" + k + ".gif";
+            if (i % 1 === 0) {
+                k++;
+            }
+        }
+    };
+
+    core.prototype.initHubConnection = function () {
+        var qs = "roomId=" + roomId + "&userId=" + userId;
+        $.connection.hub.qs = qs;
+        this.hub = $.connection.spaceHub;
+
+        $.connection.hub.start().done(function () {
+            // $.connection.hub.logging = true;
+        });
+
+    };
+
+    core.prototype.gameloop = function () {
+        frameCounter++
+        if (!IsGameStarted) {
+            if (frameCounter % 60 == 0 && frameCounter < 420) {
+                drawTimer(CountdownTimer);
+                CountdownTimer--;
+                if (CountdownTimer <= 0)
+                    IsGameStarted = true;
+            }
+        } else {
+            scorePlayer1++;
+            scorePlayer2++;
+            drawBackround();
+            drawScores();
+            drawRocks();
+            drawBonus();
+            drawLifeBar(core.globals.player1Ship.damageBar, 1);
+            drawLifeBar(wingMan.damageBar, 2);
+            drawPlayer(core.globals.player1Ship);
+            drawPlayer(wingMan);
+            checkColision();
+            updateBonusEffect(core.globals.player1Ship);
+            updateBonusEffect(wingMan);
+            drawText(onScreenText);
+        }
+        requestAnimFrame(gameLoop);
+    };
+
+    core.prototype.startEngine = function () {
+        this.globals.imageRock.src = "Images/asteroid.png";
+        this.globals.imageObjBackground.src = "Images/space_background.jpg";
+        this.globals.imageBonus.src = "Images/bonus1.png";
+        this.globals.canvas = document.getElementById('myCanvas');
+        this.globals.context = canvas.getContext('2d');
+        this.initPlayers();
+        this.initAnimations;
+        this.initHubConnection();
+    };
+
+    engine.core = core;
+
+}(engine));
+
 
 //#region Game Loading
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame ||
-            function (callback) {
-                window.setInterval(gameLoop, FPS);
-            };
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        function (callback) {
+            window.setInterval(gameLoop, FPS);
+        };
 })();
 
 window.onload = function () {
+
+
+
 
     var queryValues = getUrlVars();
     userId = queryValues["userId"];
@@ -73,75 +166,16 @@ window.onload = function () {
 
     //#region init variables
 
-    canvas = document.getElementById('myCanvas');
-    context = canvas.getContext('2d');
+    core.startEngine();
 
     if (window.addEventListener) {
         canvas.addEventListener('mousemove', mouseMove, false);
         window.addEventListener('keydown', whatKey, false);
-    }
-    else if (window.attachEvent) {
+    } else if (window.attachEvent) {
         canvas.attachEvent('onmousemove', mouseMove);
         window.attachEvent('onkeydown', whatKey);
     }
 
-    imageRock.src = "Images/asteroid.png";
-    imageObjBackground.src = "Images/space_background.jpg";
-    imageBonus.src = "Images/bonus1.png";
-
-    // Player 1
-    myShip = new spaceShip();
-    myShip.x = 200;
-    myShip.y = 430;
-    myShip.oldX = 200;
-    myShip.oldY = 430;
-    myShip.width = 120;
-    myShip.height = 120;
-    myShip.image.src = 'Images/spaceship1.png';
-    myShip.isHit = false;
-    myShip.isUnderEffect = false;
-    myShip.damageBar = 0;
-    myShip.id = "myShip";
-    myShip.Transform = false;
-
-    // Player 2
-    wingMan = new spaceShip();
-    wingMan.x = 700;
-    wingMan.y = 430;
-    wingMan.oldX = 0;
-    wingMan.oldY = 0;
-    wingMan.width = 60;
-    wingMan.height = 60;
-    wingMan.image.src = 'Images/spaceship2.png';
-    wingMan.isHit = false;
-    wingMan.isUnderEffect = false;
-    wingMan.damageBar = 0;
-    wingMan.id = "wingman";
-    wingMan.Transform = false;
-
-    var j = 0;
-    for (var i = 0; i < 7 * 5; i++) {
-        explosionArray[i] = {
-            image: new Image()
-        };
-
-        explosionArray[i].image.src = "Images/Frames/e" + (j + 1) + ".png";
-        if (i % 5 === 0) {
-            j++;
-        }
-    }
-
-    var k = 0;
-    for (var i = 0; i < 35 * 1; i++) {
-        shipTransform[i] = {
-            image: new Image()
-        };
-
-        shipTransform[i].image.src = "Images/New ship/tmp-" + k + ".gif";
-        if (i % 1 === 0) {
-            k++;
-        }
-    }
 
     //in Debug Mode
     if (roomId == null) {
@@ -149,105 +183,82 @@ window.onload = function () {
         roomId = "r1 ";
     }
 
-    var qs = "roomId=" + roomId + "&userId=" + userId;
-    $.connection.hub.qs = qs;
-    hub = $.connection.spaceHub;
 
-    //#endregion
 
-    //#region client Methods
-    $.connection.hub.start().done(function () {
-        // $.connection.hub.logging = true;
-    });
-
-    hub.client.shipMoved = function (x, y, id) {
+    engine.core.hub.client.shipMoved = function (x, y, id) {
         if (IsGameStarted) {
-            wingMan.x = x;
-            wingMan.y = y;
+            core.globals.player2Ship.x = x;
+            core.globals.player2Ship.y = y;
         }
     };
 
-    hub.client.setRockData = function (data) {
-        rocksArr[data.Index] = new spaceRock();
-        rocksArr[data.Index].x = data.X;
-        rocksArr[data.Index].y = data.Y;
-        rocksArr[data.Index].speed = data.Speed;
-        rocksArr[data.Index].angle = data.Angle;
-        rocksArr[data.Index].rotationSpeed = data.RotationSpeed;
-        rocksArr[data.Index].height = data.Height;
-        rocksArr[data.Index].width = data.Width;
+    engine.core.hub.client.setRockData = function (data) {
+        core.globals.rocksArr[data.Index] = new spaceRock(data.X, data.Y,data.Speed,data.Angle,data.RotationSpeed,data.Width,data.Height);
     };
 
-    hub.client.setRockArray = function (data) {
+    engine.core.hub.client.setRockArray = function (data) {
         for (var i = 0; i < data.length; i++) {
-            rocksArr[i] = new spaceRock();
-            rocksArr[i].x = data[i].X;
-            rocksArr[i].y = data[i].Y;
-            rocksArr[i].speed = data[i].Speed;
-            rocksArr[i].angle = data[i].Angle;
-            rocksArr[i].rotationSpeed = data[i].RotationSpeed;
-            rocksArr[i].height = data[i].Height;
-            rocksArr[i].width = data[i].Width;
+            rcore.globals.rocksArr[i] = new spaceRock(data.X, data.Y, data.Speed, data.Angle, data.RotationSpeed, data.Width, data.Height);
+           
         }
     };
 
-    hub.client.setBonusData = function (data) {
+    engine.core.hub.client.setBonusData = function (data) {
         var now = moment().format('h:mm:ss');
         updateBonus(data);
     }
 
-    hub.client.wingManExplode = function (data) {
+    engine.core.hub.client.wingManExplode = function (data) {
         if (IsGameStarted) {
-            wingMan.takeHit();
+            wingcore.globals.player2ShipMan.takeHit();
             updateScore(2, "hit");
         }
     }
 
-    hub.client.startGame = function (playerIndex) {
+    engine.core.hub.client.startGame = function (playerIndex) {
         switch (playerIndex) {
             case 1:
-                // myShip.image.src = 'Images/spaceship1.png'
-                myShip.image.src = 'Images/New ship/tmp-35.gif'
-                wingMan.image.src = 'Images/spaceship2.png'
-                myShip.Transform = true;
-                myShip.frameIndex = 0;
+                // core.globals.player1Ship.image.src = 'Images/spaceship1.png'
+                engine.core.globals.player1Ship.image.src = 'Images/New ship/tmp-35.gif'
+                engine.core.globals.player2Ship.image.src = 'Images/spaceship2.png'
+                engine.core.globals.player1Ship.Transform = true;
+                engine.core.globals.player1Ship.frameIndex = 0;
 
                 break;
             case 2:
-                myShip.image.src = 'Images/spaceship2.png'
-                wingMan.image.src = 'Images/spaceship1.png'
-                myShip.x = wingMan.x;
-                myShip.y = wingMan.y;
-                wingMan.x = myShip.oldX;
-                wingMan.y = myShip.oldY;
+                engine.core.globals.player1Ship.image.src = 'Images/spaceship2.png'
+                engine.core.globals.player2Ship.image.src = 'Images/spaceship1.png'
+                engine.core.globals.player1Ship.x = engine.core.globals.player2Ship.x;
+                engine.core.globals.player1Ship.y = engine.core.globals.player2Ship.y;
+                engine.core.globals.player2Ship.x = engine.core.globals.player1Ship.oldX;
+                engine.core.globals.player2Ship.y = engine.core.globals.player1Ship.oldY;
 
                 break;
 
         }
         showMessage("Click 'Esc' to exit the room !!!");
-        FPS = 1000 / 60;
         backGroundSpeed = 2;
-        hub.server.initRockArray();
+        engine.core.hub.server.initRockArray();
         gameLoop();
     }
 
-    hub.client.playerWait = function () {
+    engine.core.hub.client.playerWait = function () {
         showMessage("Wait for another player to arrive ...");
         drawBackround();
         drawScores();
-        drawLifeBar(myShip.damageBar, 1);
+        drawLifeBar(core.globals.player1Ship.damageBar, 1);
         drawLifeBar(wingMan.damageBar, 2);
-        drawPlayer(myShip);
+        drawPlayer(core.globals.player1Ship);
         drawPlayer(wingMan);
     }
 
-    hub.client.redirectToLobby = function (urlTarget, msg) {
+    engine.core.hub.client.redirectToLobby = function (urlTarget, msg) {
         showMessage(msg);
         FPS = 0;
         window.location = urlTarget;
     };
 
-    hub.client.playerTakeBonus = function (type, bonusIndex) {
+    engine.core.hub.client.playerTakeBonus = function (type, bonusIndex) {
         bonusArr[bonusIndex].timeout = 0;
         switch (type) {
             case 0:
@@ -277,10 +288,10 @@ window.onload = function () {
         }
     }
 
-    hub.client.wingmanBump = function () {
+    engine.core.hub.client.wingmanBump = function () {
         var effect = new bumpEffect(false);
-        myShip.fx = effect;
-        myShip.isUnderEffect = true;
+        core.globals.player1Ship.fx = effect;
+        core.globals.player1Ship.isUnderEffect = true;
         console.log("bumped");
     }
     //#endregion
@@ -289,41 +300,9 @@ window.onload = function () {
 imageObjBackground.onload = function () {
     // draw background and both players
     context.drawImage(imageObjBackground, 0, 0);
-    context.drawImage(myShip.image, myShip.x, myShip.y);
+    context.drawImage(core.globals.player1Ship.image, core.globals.player1Ship.x, core.globals.player1Ship.y);
     context.drawImage(wingMan.image, wingMan.x, wingMan.y);
 };
-
-//#endregion
-
-//#region gameLoop
-function gameLoop() {
-    frameCounter++
-    if (!IsGameStarted) {
-        if (frameCounter % 60 == 0 && frameCounter < 420) {
-            drawTimer(CountdownTimer);
-            CountdownTimer--;
-            if (CountdownTimer <= 0)
-                IsGameStarted = true;
-        }
-    }
-    else {
-        scorePlayer1++;
-        scorePlayer2++;
-        drawBackround();
-        drawScores();
-        drawRocks();
-        drawBonus();
-        drawLifeBar(myShip.damageBar, 1);
-        drawLifeBar(wingMan.damageBar, 2);
-        drawPlayer(myShip);
-        drawPlayer(wingMan);
-        checkColision();
-        updateBonusEffect(myShip);
-        updateBonusEffect(wingMan);
-        drawText(onScreenText);
-    }
-    requestAnimFrame(gameLoop);
-}
 
 //#endregion
 
@@ -364,17 +343,17 @@ function drawLifeBar(minLifeBar, playerIndex) {
     //draw life bar
     context.beginPath();
     if (playerIndex === 1) {
-        context.moveTo(11, y);//start
-        context.lineTo(11, 489);//left
-        context.lineTo(29, 489);//footer
-        context.lineTo(29, y);//right
-        context.lineTo(11, y);//head
+        context.moveTo(11, y); //start
+        context.lineTo(11, 489); //left
+        context.lineTo(29, 489); //footer
+        context.lineTo(29, y); //right
+        context.lineTo(11, y); //head
     } else {
-        context.moveTo(871, y);//start
-        context.lineTo(871, 489);//left
-        context.lineTo(889, 489);//footer
-        context.lineTo(889, y);//right
-        context.lineTo(871, y);//head
+        context.moveTo(871, y); //start
+        context.lineTo(871, 489); //left
+        context.lineTo(889, 489); //footer
+        context.lineTo(889, y); //right
+        context.lineTo(871, y); //head
     }
 
     context.fillStyle = "rgba(255,0,0,0.5)";
@@ -385,12 +364,11 @@ function drawLifeBar(minLifeBar, playerIndex) {
 function drawPlayer(ship) {
     if (ship.isHit) {
         drawExplosion(ship);
-    }
-    else {
+    } else {
         context.drawImage(ship.image, ship.x, ship.y, ship.width, ship.height);
     }
     if (ship.Transform) {
-        
+
         drawShipTransform(ship);
 
     }
@@ -408,9 +386,9 @@ function drawTimer(value) {
     // draw background and both players
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.drawImage(imageObjBackground, 0, 0);
-    drawLifeBar(myShip.damageBar, 1);
+    drawLifeBar(core.globals.player1Ship.damageBar, 1);
     drawLifeBar(wingMan.damageBar, 2);
-    drawPlayer(myShip);
+    drawPlayer(core.globals.player1Ship);
     drawPlayer(wingMan);
     context.fillStyle = "rgba(255,0,0,0.5)";
     context.font = 'italic bold 70px sans-serif';
@@ -433,8 +411,7 @@ function drawRocks() {
         rocksArr[i].angle += rocksArr[i].rotationSpeed;
         if (rocksArr[i].y > 500) {
             hub.server.initRock(i);
-        }
-        else {
+        } else {
             rocksArr[i].y = rocksArr[i].y + rocksArr[i].speed;
         }
     }
@@ -444,8 +421,7 @@ function drawExplosion(ship) {
     if (ship.frameIndex < explosionArray.length) {
         context.drawImage(explosionArray[ship.frameIndex].image, ship.x - 30, ship.y - 30);
         ship.frameIndex++;
-    }
-    else {
+    } else {
         ship.isHit = false;
     }
 }
@@ -454,8 +430,7 @@ function drawShipTransform(ship) {
     if (ship.frameIndex < shipTransform.length) {
         context.drawImage(shipTransform[ship.frameIndex].image, ship.x, ship.y, 120, 120);
         ship.frameIndex++;
-    }
-    else {
+    } else {
         ship.Transform = false;
     }
 }
@@ -490,6 +465,7 @@ function drawRotatedImage(image, x, y, angle, width, height) {
 //#endregion
 
 //#region Update
+
 function updateBonus(data) {
     if (IsGameStarted) {
         //bonusArr = data;
@@ -511,9 +487,11 @@ function updateScore(playerIndex, updateType) {
     switch (updateType) {
         case "bonus":
             switch (playerIndex) {
-                case 1: scorePlayer1 += 1000;
+                case 1:
+                    scorePlayer1 += 1000;
                     break;
-                case 2: scorePlayer2 += 1000;
+                case 2:
+                    scorePlayer2 += 1000;
                     break;
             }
             break;
@@ -523,8 +501,7 @@ function updateScore(playerIndex, updateType) {
                 case 1:
                     if (scorePlayer1 > 500) {
                         scorePlayer1 -= 500;
-                    }
-                    else scorePlayer1 = 0
+                    } else scorePlayer1 = 0
                     break;
                 case 2:
                     if (scorePlayer2 > 500)
@@ -544,8 +521,8 @@ function updateBonusEffect(ship) {
 
 function checkColision() { //make more generic collidable interface;
 
-    if (!myShip.isHit && !myShip.shieldsUp) {
-        var shipCenter = getCenterPoint(myShip)
+    if (!core.globals.player1Ship.isHit && !core.globals.player1Ship.shieldsUp) {
+        var shipCenter = getCenterPoint(core.globals.player1Ship)
         var wingManCenter = getCenterPoint(wingMan);
         for (var i = 0; i < rocksArr.length; ++i) {
             var rockCenter = getCenterPoint(rocksArr[i]);
@@ -554,7 +531,7 @@ function checkColision() { //make more generic collidable interface;
             var dist = Math.sqrt(deltax * deltax + deltay * deltay);
             if (dist < 30) {
                 updateScore(1, "hit");
-                myShip.explode(i);
+                core.globals.player1Ship.explode(i);
             }
         }
         if (!isHelmsLocked) {
@@ -565,23 +542,22 @@ function checkColision() { //make more generic collidable interface;
                 isHelmsLocked = true;
                 //updateScore(1, "hit");
                 console.log("player collide");
-                if (myShip.x > wingMan.x) {
+                if (core.globals.player1Ship.x > wingMan.x) {
                     var effect = new bumpEffect(true);
-                    myShip.isUnderEffect = true;
-                    myShip.fx = effect;
+                    core.globals.player1Ship.isUnderEffect = true;
+                    core.globals.player1Ship.fx = effect;
                     var weffect = new bumpEffect(false);
                     wingMan.isUnderEffect = true;
                     wingMan.fx = weffect;
-                }
-                else {
+                } else {
                     var effect = new bumpEffect(false);
-                    myShip.isUnderEffect = true;
-                    myShip.fx = effect;
+                    core.globals.player1Ship.isUnderEffect = true;
+                    core.globals.player1Ship.fx = effect;
                     var weffect = new bumpEffect(true);
                     wingMan.isUnderEffect = true;
                     wingMan.fx = weffect;
                 }
-                //myShip.explode(i);
+                //core.globals.player1Ship.explode(i);
             }
         }
     }
@@ -592,36 +568,35 @@ function checkColision() { //make more generic collidable interface;
             var center = getCenterPoint(bonusArr[i]);
 
             // chekc if bonusItem is Taken
-            if (center.x >= myShip.x - 10 && center.x <= myShip.x + 70) {
-                if (center.y + 25 >= myShip.y + 10 && center.y + 25 <= myShip.y + 80) {
+            if (center.x >= core.globals.player1Ship.x - 10 && center.x <= core.globals.player1Ship.x + 70) {
+                if (center.y + 25 >= core.globals.player1Ship.y + 10 && center.y + 25 <= core.globals.player1Ship.y + 80) {
                     bonusArr[i].timeout = 0;
                     if (bonusArr[i].type == 0) {
                         updateScore(1, "bonus");
                         console.log("points");
-                    }
-                    else switch (bonusArr[i].type) {
+                    } else switch (bonusArr[i].type) {
                         case 1:
-                            if (myShip.fx)
-                                myShip.fx.clearFX(myShip);
-                            myShip.isUnderEffect = true;
+                            if (core.globals.player1Ship.fx)
+                                core.globals.player1Ship.fx.clearFX(core.globals.player1Ship);
+                            core.globals.player1Ship.isUnderEffect = true;
                             var effect = new shieldsEffect();
-                            myShip.fx = effect;
+                            core.globals.player1Ship.fx = effect;
                             onScreenText = "Shields Up!";
                             break;
                         case 2:
-                            if (myShip.fx)
-                                myShip.fx.clearFX(myShip);
-                            myShip.isUnderEffect = true;
+                            if (core.globals.player1Ship.fx)
+                                core.globals.player1Ship.fx.clearFX(core.globals.player1Ship);
+                            core.globals.player1Ship.isUnderEffect = true;
                             var effect = new shrinkEffect(32);
-                            myShip.fx = effect;
+                            core.globals.player1Ship.fx = effect;
                             onScreenText = "Shrink Ray!";
                             break;
                         case 3:
-                            if (myShip.fx)
-                                myShip.fx.clearFX(myShip);
-                            myShip.isUnderEffect = true;
+                            if (core.globals.player1Ship.fx)
+                                core.globals.player1Ship.fx.clearFX(core.globals.player1Ship);
+                            core.globals.player1Ship.isUnderEffect = true;
                             var effect = new drunkEffect(3);
-                            myShip.fx = effect;
+                            core.globals.player1Ship.fx = effect;
                             onScreenText = "Drunk Driving!";
                             break;
                     }
@@ -633,44 +608,44 @@ function checkColision() { //make more generic collidable interface;
 }
 
 function whatKey(evt) {
-    if (!myShip.isHit && !isHelmsLocked && isHelmsLocked) {
+    if (!core.globals.player1Ship.isHit && !isHelmsLocked && isHelmsLocked) {
         // Flag to put variables back if we hit an edge of the board.
         var flag = 0;
 
         // Get where the ship was before key process.
-        myShip.oldX = myShip.x;
-        myShip.oldY = myShip.y;
+        core.globals.player1Ship.oldX = core.globals.player1Ship.x;
+        core.globals.player1Ship.oldY = core.globals.player1Ship.y;
 
         switch (evt.keyCode) {
-            case 37:  // Left arrow.
-                myShip.x = myShip.x - 30;
-                if (myShip.x < 30) {
+            case 37: // Left arrow.
+                core.globals.player1Ship.x = core.globals.player1Ship.x - 30;
+                if (core.globals.player1Ship.x < 30) {
                     // If at edge, reset ship position and set flag.
-                    myShip.x = 30;
+                    core.globals.player1Ship.x = 30;
                     flag = 1;
                 }
                 break;
             case 39: // Right arrow.
-                myShip.x = myShip.x + 30;
-                if (myShip.x > backGroundX - 30) {
+                core.globals.player1Ship.x = core.globals.player1Ship.x + 30;
+                if (core.globals.player1Ship.x > backGroundX - 30) {
                     // If at edge, reset ship position and set flag.
-                    myShip.x = backGroundX - 30;
+                    core.globals.player1Ship.x = backGroundX - 30;
                     flag = 1;
                 }
                 break;
             case 40: // Down arrow
-                myShip.y = myShip.y + 30;
-                if (myShip.y > backGroundY) {
+                core.globals.player1Ship.y = core.globals.player1Ship.y + 30;
+                if (core.globals.player1Ship.y > backGroundY) {
                     // If at edge, reset ship position and set flag.
-                    myShip.y = backGroundY;
+                    core.globals.player1Ship.y = backGroundY;
                     flag = 1;
                 }
                 break;
             case 38: // Up arrow 
-                myShip.y = myShip.y - 30;
-                if (myShip.y < 0) {
+                core.globals.player1Ship.y = core.globals.player1Ship.y - 30;
+                if (core.globals.player1Ship.y < 0) {
                     // If at edge, reset ship position and set flag.
-                    myShip.y = 0;
+                    core.globals.player1Ship.y = 0;
                     flag = 1;
                 }
                 break;
@@ -684,7 +659,7 @@ function whatKey(evt) {
                 isReadyToExit = true;
                 showMessage("Are You Sure Y/N ?");
                 break;
-            case 78:// No
+            case 78: // No
                 showMessage("Click 'Esc' to exit the room !!!");
                 isReadyToExit = false;
                 break;
@@ -693,20 +668,19 @@ function whatKey(evt) {
         // If flag is set, the ship did not move.
         // Put everything back the way it was.
         if (flag && !isHelmsLocked) {
-            myShip.x = myShip.oldX;
-            myShip.y = myShip.oldY;
-        }
-        else hub.server.moveShip(myShip.x, myShip.y, "");
+            core.globals.player1Ship.x = core.globals.player1Ship.oldX;
+            core.globals.player1Ship.y = core.globals.player1Ship.oldY;
+        } else hub.server.moveShip(core.globals.player1Ship.x, core.globals.player1Ship.y, "");
     }
 }
 
 function mouseMove(evt) {
     if ((evt.clientX < backGroundX && evt.clientY < backGroundY) && (evt.clientX > 0 && evt.clientY > 0)) {
         evt.preventDefault();
-        if (!myShip.isHit && IsGameStarted && !isHelmsLocked) {
-            myShip.x = evt.clientX;
-            myShip.y = evt.clientY;
-            hub.server.moveShip(myShip.x, myShip.y, "");
+        if (!core.globals.player1Ship.isHit && IsGameStarted && !isHelmsLocked) {
+            core.globals.player1Ship.x = evt.clientX;
+            core.globals.player1Ship.y = evt.clientY;
+            hub.server.moveShip(core.globals.player1Ship.x, core.globals.player1Ship.y, "");
         }
         this.style.cursor = 'none';
     } else {
@@ -717,8 +691,10 @@ function mouseMove(evt) {
 
 //#region Utils
 // Read a page's GET URL variables and return them as an associative array.
+
 function getUrlVars() {
-    var vars = [], hash;
+    var vars = [],
+        hash;
     var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
     for (var i = 0; i < hashes.length; i++) {
         hash = hashes[i].split('=');
@@ -729,7 +705,10 @@ function getUrlVars() {
 }
 
 function getCenterPoint(object) {
-    return { x: Math.round(object.x + object.width / 2), y: Math.round(object.y + object.height / 2) };
+    return {
+        x: Math.round(object.x + object.width / 2),
+        y: Math.round(object.y + object.height / 2)
+    };
 }
 
 function showMessage(message) {
@@ -737,4 +716,3 @@ function showMessage(message) {
 }
 
 //#endregion
-

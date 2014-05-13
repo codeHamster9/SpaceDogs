@@ -1,4 +1,4 @@
-﻿var extend = (function extend(subClass, superClass) {
+﻿function extend(subClass, superClass) {
     var F = function () { };
     F.prototype = new F();
     subClass.prototype = new F();
@@ -8,7 +8,7 @@
     if (superClass.prototype.constructor == Object.prototype.constructor) {
         superClass.prototype.constructor = superClass;
     }
-}());
+}
 
 
 var effects;
@@ -16,7 +16,8 @@ var effects;
     var drunkFX = (function (effectBase) {
 
 
-        function DrunkEffect(alcoholLvl) {
+        function DrunkEffect(alcoholLvl, backGroundX) {
+            this.backGroundX = backGroundX;
             this.duration = 420;
             this.type = "drunk";
             this.amount = alcoholLvl;
@@ -26,25 +27,27 @@ var effects;
         extend(DrunkEffect, effectBase);
 
         DrunkEffect.prototype.apply = function (ship) {
-            if (ship.x < backGroundX)
+            if (ship.x < this.backGroundX) {
                 ship.x = ship.x + this.amount;
+            }
             if (this.duration == 0) {
                 this.clearFX(ship);
             }
+
             this.duration--;
         };
 
         DrunkEffect.prototype.clearFX = function (ship) {
             ship.isUnderEffect = false;
             ship.fx = null;
-            onScreenText = "";
+            //onScreenText = "";
         };
 
         return DrunkEffect;
 
     }(effects.effectBase));
 
-    effects.drunkEffect = DrunkEffect;
+    effects.drunkEffect = drunkFX;
 
 
-}(effects))
+}(effects));

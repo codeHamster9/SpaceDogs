@@ -1,4 +1,4 @@
-﻿var extend = (function extend(subClass, superClass) {
+﻿function extend(subClass, superClass) {
     var F = function () { };
     F.prototype = new F();
     subClass.prototype = new F();
@@ -8,30 +8,34 @@
     if (superClass.prototype.constructor == Object.prototype.constructor) {
         superClass.prototype.constructor = superClass;
     }
-}());
+}
 
 var effects;
 (function (effects) {
     var bumpFX = (function (effectBase) {
 
-        function BumpEffect(hitter) {
+        function BumpEffect(hitter, backGroundX) {
+            this.backGroundX = backGroundX;
             this.duration = 8;
             this.type = "bump";
             this.role = hitter;
-            effectBase.prototype.constructor.call(this, this.type, this.duration);
+            effectBase.prototype.constructor.call(this, this.duration, this.type);
         }
 
         extend(BumpEffect, effectBase);
 
         BumpEffect.prototype.apply = function (ship) {
 
-            if (ship.x < backGroundX) {
-                if (hitter) {
+            if (ship.x < this.backGroundX) {
+                if (this.hitter) {
                     ship.x = (ship.x + 3.5);
                 }
-                else ship.x = (ship.x - 3.5);
+                else {
+                    ship.x = (ship.x - 3.5);
+                }
 
-                isHelmsLocked = true;
+                //isHelmsLocked = true;
+                // change to event broadcast 
             }
             if (this.duration == 0) {
                 this.clearFX(ship);
@@ -39,18 +43,17 @@ var effects;
             this.duration--;
         };
 
-
         BumpEffect.prototype.clearFX = function (ship) {
             ship.isUnderEffect = false;
             ship.fx = null;
-            isHelmsLocked = false;
-            onScreenText = "";
+            //isHelmsLocked = false;
+            //onScreenText = "";
         };
 
         return BumpEffect;
 
     }(effects.effectBase));
 
-    effect.BumpEffect = bumpFX;
+    effects.BumpEffect = bumpFX;
 
 }(effects));
