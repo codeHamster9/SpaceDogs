@@ -15,13 +15,13 @@ module effects {
 
         public apply(ship: spaceShip): void {
             //override thisss
-        };
+        }
 
         public clearFX(ship: spaceShip): void {
 
             ship.isUnderEffect = false;
             ship.fx = null;
             document.getElementById('myCanvas').textContent = "";
-        };
+        }
     }
 }

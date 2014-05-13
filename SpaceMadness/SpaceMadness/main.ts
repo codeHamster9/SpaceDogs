@@ -17,6 +17,7 @@
 var canvas;
 var context;
 var hub;
+var bar;
 
 var imageObjBackground = new Image();
 var imageRock = new Image();
@@ -223,7 +224,7 @@ window.onload = function () {
 
     hub.client.setRockArray = function (rocks: spaceRock[]) {
         if (rocksArr == null)
-            rocksArr = new spaceRock[];
+            rocksArr = new Array<spaceRock>();
         rocksArr = rocks;
     };
 
@@ -307,7 +308,7 @@ window.onload = function () {
                 console.log("server bonus payload : ", data.length);
             }
             if (bonusArr == null)
-                bonusArr = new bonusItem[];
+                bonusArr = new Array<bonusItem>();
             for (var i = 0; i < data.length; i++) {
                 bonusArr[i] = new bonusItem(data[i]);
             }

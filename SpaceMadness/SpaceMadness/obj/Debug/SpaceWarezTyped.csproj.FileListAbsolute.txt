@@ -15,3 +15,6 @@ C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\bin\Newtonsoft.Json.xml
 C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\obj\Debug\SpaceWarezTyped.dll
 C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\obj\Debug\SpaceWarezTyped.pdb
 C:\Dev\SpaceWarz1\SpaceWarz\SpaceWarezTyped\obj\Debug\SpaceWarezTyped.csprojResolveAssemblyReference.cache
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceMadness\obj\Debug\SpaceWarezTyped.csprojResolveAssemblyReference.cache
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceMadness\obj\Debug\SpaceWarezTyped.dll
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceMadness\obj\Debug\SpaceWarezTyped.pdb

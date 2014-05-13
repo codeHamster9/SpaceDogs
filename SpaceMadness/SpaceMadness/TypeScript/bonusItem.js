@@ -12,4 +12,4 @@ var bonusItem = (function () {
     }
     return bonusItem;
 })();
-//@ sourceMappingURL=bonusItem.js.map
+//# sourceMappingURL=bonusItem.js.map

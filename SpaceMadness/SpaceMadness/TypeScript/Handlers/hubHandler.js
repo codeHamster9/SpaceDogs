@@ -4,4 +4,4 @@ var hubHandler = (function () {
     }
     return hubHandler;
 })();
-//@ sourceMappingURL=hubHandler.js.map
+//# sourceMappingURL=hubHandler.js.map

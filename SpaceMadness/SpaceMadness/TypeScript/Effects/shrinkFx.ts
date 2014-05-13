@@ -39,6 +39,6 @@ module effects {
             ship.height = ship.originalHeight;
             ship.width = ship.originalWidth;
             super.clearFX(ship);
-        };
+        }
     }
 }

@@ -3,11 +3,11 @@
 module effects {
     export class bumpFX extends effectBase {
         type: string;
-        role: bool;
+        role: boolean;
         borderX: number;
         borderY: number;
 
-        constructor(ship: spaceShip, hitter: bool) {
+        constructor(ship: spaceShip, hitter: boolean) {
             super("bump", ship);
             this.borderX = document.getElementById("myCanvas").clientWidth;
             this.borderY = document.getElementById("myCanvas").clientHeight

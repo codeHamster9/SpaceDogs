@@ -10,7 +10,8 @@ var effects;
         }
         effectBase.prototype.apply = function (ship) {
             //override thisss
-                    };
+        };
+
         effectBase.prototype.clearFX = function (ship) {
             ship.isUnderEffect = false;
             ship.fx = null;
@@ -18,6 +19,6 @@ var effects;
         };
         return effectBase;
     })();
-    effects.effectBase = effectBase;    
+    effects.effectBase = effectBase;
 })(effects || (effects = {}));
-//@ sourceMappingURL=effectBase.js.map
+//# sourceMappingURL=effectBase.js.map

@@ -1,34 +1,36 @@
+/// <reference path="effectBase.ts" />
 var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-/// <reference path="effectBase.ts" />
 var effects;
 (function (effects) {
     var bumpFX = (function (_super) {
         __extends(bumpFX, _super);
         function bumpFX(ship, hitter) {
-                _super.call(this, "bump", ship);
+            _super.call(this, "bump", ship);
             this.borderX = document.getElementById("myCanvas").clientWidth;
             this.borderY = document.getElementById("myCanvas").clientHeight;
             this.duration = 8;
             this.role = hitter;
         }
         bumpFX.prototype.apply = function (ship) {
-            if(ship.x < this.borderX) {
-                if(this.role) {
+            if (ship.x < this.borderX) {
+                if (this.role) {
                     ship.x = (ship.x + 3.5);
-                } else {
+                } else
                     ship.x = (ship.x - 3.5);
-                }
                 ship.isHelmsLocked = true;
             }
-            if(this.duration == 0) {
+
+            if (this.duration == 0) {
                 this.clearFX(ship);
             }
             this.duration--;
         };
+
         bumpFX.prototype.clearFX = function (ship) {
             ship.isUnderEffect = false;
             ship.fx = null;
@@ -36,6 +38,6 @@ var effects;
         };
         return bumpFX;
     })(effects.effectBase);
-    effects.bumpFX = bumpFX;    
+    effects.bumpFX = bumpFX;
 })(effects || (effects = {}));
-//@ sourceMappingURL=bumpFX.js.map
+//# sourceMappingURL=bumpFX.js.map

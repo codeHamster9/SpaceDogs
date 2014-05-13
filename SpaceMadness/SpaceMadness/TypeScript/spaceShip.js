@@ -23,19 +23,20 @@ var spaceShip = (function () {
         this.isHelmsLocked = false;
     }
     spaceShip.prototype.applyEffect = function () {
-        if(this.fx.duration >= 0) {
+        if (this.fx.duration >= 0)
             this.fx.apply(this);
-        }
     };
+
     spaceShip.prototype.explode = function () {
         this.isHit = true;
         this.frameIndex = 0;
         this.takeHit();
     };
+
     spaceShip.prototype.takeHit = function () {
         this.isHit = true;
         this.frameIndex = 0;
-        if(this.damageBar + 35 < 420) {
+        if (this.damageBar + 35 < 420) {
             this.damageBar += 35;
         } else {
             this.isDead = true;
@@ -45,4 +46,5 @@ var spaceShip = (function () {
     };
     return spaceShip;
 })();
-//@ sourceMappingURL=spaceShip.js.map
+;
+//# sourceMappingURL=spaceShip.js.map

@@ -11,18 +11,18 @@ class spaceShip implements ICollidable {
     height: number;
     image: HTMLImageElement;
     damageBar: number;
-    isHit: bool;
+    isHit: boolean;
     frameIndex: number;
-    isUnderEffect: bool;
-    shieldsUp: bool;
+    isUnderEffect: boolean;
+    shieldsUp: boolean;
     fx: effects.effectBase;
-    Transform: bool;
+    Transform: boolean;
     originalWidth: number;
     originalHeight: number;
-    isDead: bool;
+    isDead: boolean;
     life: number;
     type: string;
-    isHelmsLocked: bool;
+    isHelmsLocked: boolean;
     distance: number;
 
     constructor(id: string, imageURL: string, _x: number, _y: number) {
@@ -45,18 +45,18 @@ class spaceShip implements ICollidable {
         this.life = 3;
         this.type = "ship";
         this.isHelmsLocked = false;
-    };
+    }
 
     applyEffect() {
          if (this.fx.duration >= 0)
                 this.fx.apply(this);
-    };
+    }
 
     explode() {
         this.isHit = true;
         this.frameIndex = 0;
         this.takeHit();
-    };
+    }
 
     takeHit() {
         this.isHit = true;
@@ -69,5 +69,5 @@ class spaceShip implements ICollidable {
             this.life--;
             this.damageBar = 0;
         }
-    };
-}
+    }
+};

@@ -6,7 +6,7 @@ module effects {
         amount: number;
         borderX: number;
         borderY: number;
-        inverted: bool;
+        inverted: boolean;
 
         constructor(ship: spaceShip, alcoholLvl: number) {
             super("drunk", ship);

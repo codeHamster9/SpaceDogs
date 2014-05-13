@@ -12,4 +12,4 @@ var spaceRock = (function () {
     }
     return spaceRock;
 })();
-//@ sourceMappingURL=spaceRock.js.map
+//# sourceMappingURL=spaceRock.js.map

@@ -14,7 +14,7 @@ module effects {
             this.duration--;
         }
 
-        private clearFX(ship: spaceShip) {
+        public clearFX(ship: spaceShip) {
             ship.shieldsUp = false;
             super.clearFX(ship);
         }

@@ -1,3 +1,4 @@
+
 // Module
 var Shapes;
 (function (Shapes) {
@@ -8,16 +9,18 @@ var Shapes;
             this.x = x;
             this.y = y;
         }
-        Point.prototype.getDist = // Instance member
-        function () {
+        // Instance member
+        Point.prototype.getDist = function () {
             return Math.sqrt(this.x * this.x + this.y * this.y);
         };
+
         Point.origin = new Point(0, 0);
         return Point;
     })();
-    Shapes.Point = Point;    
+    Shapes.Point = Point;
 })(Shapes || (Shapes = {}));
+
 // Local variables
 var p = new Shapes.Point(3, 4);
 var dist = p.getDist();
-//@ sourceMappingURL=animationHandler.js.map
+//# sourceMappingURL=animationHandler.js.map
