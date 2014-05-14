@@ -12,8 +12,8 @@ var engine;
     }());
 
     draw.prototype.drawBackround = function () {
-        this.core.context.clearRect(0, 0, this.core.globals.canvas.width, this.core.globals.canvas.height);
-        this.core.context.drawImage(this.core.globals.imageObjBackground, 0, this.core.globals.backgroundVelocity);
+        this.core.globals.context.clearRect(0, 0, this.core.globals.canvas.width, this.core.globals.canvas.height);
+        this.core.globals.context.drawImage(this.core.globals.imageObjBackground, 0, this.core.globals.backgroundVelocity);
         if (this.core.globals.backgroundVelocity > this.core.globals.imageObjBackground.height) {
             this.core.globals.backgroundVelocity = 0;
         }
@@ -131,8 +131,8 @@ var engine;
     };
 
     draw.prototype.drawShipTransform = function (ship) {
-        if (ship.frameIndex < this.shipTransform.length) {
-            this.core.globals.context.drawImage(this.shipTransform[ship.frameIndex].image, ship.x, ship.y, 120, 120);
+        if (ship.frameIndex < this.core.globals.shipTransform.length) {
+            this.core.globals.context.drawImage(this.core.globals.shipTransform[ship.frameIndex].image, ship.x, ship.y, 120, 120);
             ship.frameIndex++;
         } else {
             ship.Transform = false;
