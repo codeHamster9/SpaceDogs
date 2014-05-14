@@ -1,10 +1,10 @@
-﻿var engine;
+﻿
 
 (function (engine) {
 
     var ship = (function () {
 
-        function SpaceShip(id,x,y,width,height) {
+        function SpaceShip(id, x, y, width, height) {
             this.id = id;
             this.x = x;
             this.y = y;

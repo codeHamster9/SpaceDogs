@@ -1,5 +1,4 @@
-﻿/*global _comma_separated_list_of_variables_*/
-var engine;
+﻿var engine;
 (function (engine) {
 
     var core = (function () {
@@ -47,6 +46,8 @@ var engine;
             };
             this.hub = {};
         }
+
+
         return core;
 
     }());
@@ -96,45 +97,49 @@ var engine;
 
     };
 
-    core.prototype.gameloop = function () {
-        frameCounter++;
-        if (!IsGameStarted) {
-            if (frameCounter % 60 == 0 && frameCounter < 420) {
-                drawTimer(CountdownTimer);
-                CountdownTimer--;
-                if (CountdownTimer <= 0) {
-                    IsGameStarted = true;
+    core.prototype.gameloop = function (draw, update) {
+        this.globals.frameCounter++;
+        if (!this.globals.IsGameStarted) {
+            if (this.globals.frameCounter % 60 == 0 && this.globals.frameCounter < 420) {
+                draw.drawTimer(CountdownTimer);
+                this.globals.CountdownTimer--;
+                if (this.globals.CountdownTimer <= 0) {
+                    this.globals.IsGameStarted = true;
                 }
             }
         } else {
-            scorePlayer1++;
-            scorePlayer2++;
-            drawBackround();
-            drawScores();
-            drawRocks();
-            drawBonus();
-            drawLifeBar(core.globals.player1Ship.damageBar, 1);
-            drawLifeBar(wingMan.damageBar, 2);
-            drawPlayer(core.globals.player1Ship);
-            drawPlayer(wingMan);
-            checkColision();
-            updateBonusEffect(core.globals.player1Ship);
-            updateBonusEffect(wingMan);
-            drawText(onScreenText);
+            this.globals.scorePlayer1++;
+            this.globals.scorePlayer2++;
+            draw.drawBackround();
+            draw.drawScores();
+            draw.drawRocks();
+            draw.drawBonus();
+            draw.drawLifeBar(core.globals.player1Ship.damageBar, 1);
+            draw.drawLifeBar(core.globals.player2Ship.damageBar, 2);
+            draw.drawPlayer(core.globals.player1Ship);
+            draw.drawPlayer(core.globals.player2Ship);
+            update.checkColision();
+            update.updateBonusEffect(core.globals.player1Ship);
+            update.updateBonusEffect(core.globals.player2Ship);
+            draw.drawText(onScreenText);
         }
         requestAnimFrame(gameLoop);
     };
 
-    core.prototype.startEngine = function () {
+    core.prototype.startEngine = function (draw, update) {
         this.globals.imageRock.src = "Images/asteroid.png";
         this.globals.imageObjBackground.src = "Images/space_background.jpg";
         this.globals.imageBonus.src = "Images/bonus1.png";
+
         this.globals.canvas = document.getElementById('myCanvas');
         this.globals.context = this.globals.canvas.getContext('2d');
         this.initPlayers();
         this.initAnimations();
         this.initHubConnection();
+        this.gameloop(draw, update);
     };
+
+
 
     engine.core = core;
 

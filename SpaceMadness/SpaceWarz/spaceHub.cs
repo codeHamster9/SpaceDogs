@@ -18,7 +18,7 @@ namespace SpaceWarz
         public static readonly ConcurrentDictionary<string, List<Player>> players = new ConcurrentDictionary<string, List<Player>>();
         private const string player1Msg = "leaving Room";
         private const string player2Msg = "player2 left the room, BYE BYE...";
-        private const string lobbyUrl = "http://localhost:49950/Lobby/leaveRoom?roomId=";
+        private const string lobbyUrl = "http://localhost:52924/Lobby/leaveRoom?roomId=";
 
         public override System.Threading.Tasks.Task OnDisconnected()
         {
