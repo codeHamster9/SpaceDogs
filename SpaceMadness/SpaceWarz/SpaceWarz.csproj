@@ -85,6 +85,18 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="core\bonusItem.js" />
+    <Content Include="core\bumpFX.js" />
+    <Content Include="core\drunkFX.js" />
+    <Content Include="core\effects.js" />
+    <Content Include="core\engine.core.js" />
+    <Content Include="core\engine.draw.js" />
+    <Content Include="core\engine.update.js" />
+    <Content Include="core\main.js" />
+    <Content Include="core\shieldFX.js" />
+    <Content Include="core\ship.js" />
+    <Content Include="core\shrinkEffect.js" />
+    <Content Include="core\spacerock.js" />
     <Content Include="Global.asax" />
     <Content Include="Images\bonus1.png" />
     <Content Include="Images\Frames\e1.png" />
