@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>XSockets.Core</id>
+    <version>3.0.6</version>
+    <title>XSockets.Core</title>
+    <authors>Uffe Björklund &amp; Magnus Thor</authors>
+    <owners>Uffe Björklund &amp; Magnus Thor</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Core dependencies</description>
+    <summary>Contains assemblies for developing realtime controllers in XSockets.NET</summary>
+    <releaseNotes />
+    <copyright>Team XSockets</copyright>
+    <dependencies>
+      <dependency id="XSockets.Plugin.Framework" version="[1.4.3]" />
+    </dependencies>
+  </metadata>
+</package>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>XSockets.JsApi</id>
+    <version>3.0.3</version>
+    <title>XSockets.JsApi</title>
+    <authors>Magnus Thor &amp; Uffe Björklund</authors>
+    <owners>Magnus Thor &amp; Uffe Björklund</owners>
+    <projectUrl>http://xsockets.net/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Provides a javascript API for sending text and binary messages to a XSockets server with a pub/sub pattern.</description>
+    <summary>Provides a javascript API for sending text and binary messages to a XSockets server with a pub/sub pattern.</summary>
+    <copyright>Team XSockets</copyright>
+    <tags>XSockets Websockets JavaScript HTML5</tags>
+  </metadata>
+</package>

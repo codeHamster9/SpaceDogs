@@ -1,0 +1,1 @@
+C:\Users\Idan\Documents\GitHub\SpaceMadness\SpaceMadness\game-emparium.xsockets.server\obj\Debug\game-emparium.xsockets.server.csprojResolveAssemblyReference.cache

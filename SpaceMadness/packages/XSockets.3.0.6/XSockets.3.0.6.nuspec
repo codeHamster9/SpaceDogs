@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>XSockets</id>
+    <version>3.0.6</version>
+    <title>XSockets</title>
+    <authors>Uffe Björklund &amp; Magnus Thor</authors>
+    <owners>Uffe Björklund &amp; Magnus Thor</owners>
+    <projectUrl>http://xsockets.net/</projectUrl>
+    <iconUrl>http://a0.twimg.com/profile_images/2458927537/rtegqmwgxj11ajojrdbz_reasonably_small.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Get started developing realtime in no time with this nuget package.</description>
+    <summary>The realtime communication platform for websockets and webrtc on Mono, .NET 4.0 and later
+Cross platform, Cross device, client-server, m2m, p2p, IoT</summary>
+    <releaseNotes>http://xsockets.net/release-notes</releaseNotes>
+    <copyright>Team XSockets</copyright>
+    <tags>HTML5 MVC Websockets WebRTC Realtime XSockets m2m p2p client server IoT</tags>
+    <dependencies>
+      <dependency id="XSockets.Server" version="[3.0.6]" />
+    </dependencies>
+  </metadata>
+</package>

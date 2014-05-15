@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceWarz", "SpaceWarz\SpaceWarz.csproj", "{8844B34C-FAE3-4D48-B76E-7A5D40D243F8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameLobby", "GameLobby\GameLobby.csproj", "{EE229026-4929-4EA0-A747-07AF1C3DB2FF}"
@@ -12,19 +14,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{1E4F2E
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "game-emparium.xsockets.server", "game-emparium.xsockets.server\game-emparium.xsockets.server.csproj", "{C63B5A2D-5B15-4EFA-9400-AAB88B8BD93A}"
+EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 3
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs29
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = SpaceWarz\\SpaceWarz.csproj
-		SccProjectName1 = SpaceWarz
-		SccLocalPath1 = SpaceWarz
-		SccProjectUniqueName2 = GameLobby\\GameLobby.csproj
-		SccProjectName2 = GameLobby
-		SccLocalPath2 = GameLobby
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -38,6 +30,10 @@ Global
 		{EE229026-4929-4EA0-A747-07AF1C3DB2FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE229026-4929-4EA0-A747-07AF1C3DB2FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE229026-4929-4EA0-A747-07AF1C3DB2FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C63B5A2D-5B15-4EFA-9400-AAB88B8BD93A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C63B5A2D-5B15-4EFA-9400-AAB88B8BD93A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C63B5A2D-5B15-4EFA-9400-AAB88B8BD93A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C63B5A2D-5B15-4EFA-9400-AAB88B8BD93A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

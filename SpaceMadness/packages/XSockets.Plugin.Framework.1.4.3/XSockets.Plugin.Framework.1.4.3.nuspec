@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>XSockets.Plugin.Framework</id>
+    <version>1.4.3</version>
+    <title>XSockets.Plugin.Framework</title>
+    <authors>Uffe Björklund &amp; Magnus Thor</authors>
+    <owners>Uffe Björklund &amp; Magnus Thor</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A package for building modular applications in a blink.</description>
+    <summary>Inspired by MEF this package lets you Export/Import types unknown a compile time.</summary>
+    <copyright>Team XSockets</copyright>
+    <language>en-US</language>
+    <tags>plugin mudularity modules</tags>
+  </metadata>
+</package>
