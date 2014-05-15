@@ -2,14 +2,11 @@ C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\SpaceWarz
 C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\SpaceWarz.dll
 C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\SpaceWarz.pdb
 C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.AspNet.SignalR.Core.dll
-C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.AspNet.SignalR.Owin.dll
 C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.AspNet.SignalR.SystemWeb.dll
 C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.Owin.Host.SystemWeb.dll
-C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.Web.Infrastructure.dll
 C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Newtonsoft.Json.dll
 C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Owin.dll
 C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.AspNet.SignalR.Core.xml
-C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.AspNet.SignalR.Owin.xml
 C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.AspNet.SignalR.SystemWeb.xml
 C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.Owin.Host.SystemWeb.xml
 C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Newtonsoft.Json.xml
@@ -34,3 +31,8 @@ C:\Users\SERVER\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microso
 C:\Users\SERVER\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.Owin.Security.dll
 C:\Users\SERVER\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.Owin.xml
 C:\Users\SERVER\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.Owin.Security.xml
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.Owin.dll
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.Owin.Security.dll
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.Owin.xml
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\bin\Microsoft.Owin.Security.xml
+C:\Users\IDAN\Documents\GitHub\SpaceMadness\SpaceMadness\SpaceWarz\obj\Debug\SpaceWarz.csprojResolveAssemblyReference.cache

@@ -87,121 +87,144 @@
     };
 
     core.prototype.initHubConnection = function() {
-        var qs = "roomId=" + this.globals.roomId + "&userId=" + this.hasOwnProperty.userId;
+        var qs = "roomId=1" + "&userId=2";
         $.connection.hub.qs = qs;
         this.hub = $.connection.spaceHub;
 
-        var that  = this;
+        //var that = this;
 
         $.connection.hub.start().done(function() {
 
-            that.hub.client.setRockArray = function(data) {
-                var i;
-                for (i = 0; i < data.length; i++) {
-                    this.globals.rocksArr[i] = new spaceRock(data.X, data.Y, data.Speed, data.Angle, data.RotationSpeed, data.Width, data.Height);
 
-                }
-            };
-
-            that.hub.client.setBonusData = function(data) {
-                var now = moment().format('h:mm:ss');
-                updateBonus(data);
-            };
-
-            that.hub.client.wingManExplode = function(data) {
-                if (this.globals.IsGameStarted) {
-                    this.globals.player2ShipMan.takeHit();
-                    updateScore(2, "hit");
-                }
-            };
-
-            that.hub.client.startGame = function(playerIndex) {
-                switch (playerIndex) {
-                    case 1:
-                        // newEngine.core.globals.player1Ship.image.src = 'Images/spaceship1.png'
-                        newEngine.core.player1Ship.image.src = 'Images/New ship/tmp-35.gif'
-                        newEngine.core.player2Ship.image.src = 'Images/spaceship2.png'
-                        newEngine.core.player1Ship.Transform = true;
-                        newEngine.core.player1Ship.frameIndex = 0;
-
-                        break;
-                    case 2:
-                        newEngine.core.player1Ship.image.src = 'Images/spaceship2.png'
-                        newEngine.core.player2Ship.image.src = 'Images/spaceship1.png'
-                        newEngine.core.player1Ship.x = newEngine.core.player2Ship.x;
-                        newEngine.core.player1Ship.y = newEngine.core.player2Ship.y;
-                        newEngine.core.player2Ship.x = newEngine.core.player1Ship.oldX;
-                        newEngine.core.player2Ship.y = newEngine.core.player1Ship.oldY;
-
-                        break;
-
-                }
-                showMessage("Click 'Esc' to exit the room !!!");
-                backGroundSpeed = 2;
-                newEngine.core.hub.server.initRockArray();
-                newEngine.core.gameLoop();
-            };
-
-            that.hub.client.playerWait = function() {
-                showMessage("Wait for another player to arrive ...");
-                drawBackround();
-                drawSnewEngine.cores();
-                drawLifeBar(newEngine.core.globals.player1Ship.damageBar, 1);
-                drawLifeBar(wingMan.damageBar, 2);
-                drawPlayer(newEngine.core.globals.player1Ship);
-                drawPlayer(wingMan);
-            };
-
-            that.hub.client.redirectToLobby = function(urlTarget, msg) {
-                showMessage(msg);
-                FPS = 0;
-                window.location = urlTarget;
-            };
-
-            that.hub.client.playerTakeBonus = function(type, bonusIndex) {
-                bonusArr[bonusIndex].timeout = 0;
-                switch (type) {
-                    case 0:
-                        updateSnewEngine.core(2, "bonus");
-                        break;
-                    case 1:
-                        if (wingMan.fx)
-                            wingMan.fx.clearFX(wingMan);
-                        wingMan.isUnderEffect = true;
-                        var effect = new shieldsEffect();
-                        wingMan.fx = effect;
-                        break;
-                    case 2:
-                        if (wingMan.fx)
-                            wingMan.fx.clearFX(wingMan);
-                        wingMan.isUnderEffect = true;
-                        var effect = new shrinkEffect(32);
-                        wingMan.fx = effect;
-                        break;
-                    case 3:
-                        if (wingMan.fx)
-                            wingMan.fx.clearFX(wingMan);
-                        wingMan.isUnderEffect = true;
-                        var effect = new drunkEffect();
-                        wingMan.fx = effect;
-                        break;
-                }
-            };
-
-            that.hub.client.wingmanBump = function() {
-                var effect = new bumpEffect(false);
-                newEngine.core.globals.player1Ship.fx = effect;
-                newEngine.core.globals.player1Ship.isUnderEffect = true;
-                console.log("bumped");
-            };
-
-            that.hub.client.shipMoved = function(x, y, id) {
-                if (IsGameStarted) {
-                    newEngine.core.globals.player2Ship.x = x;
-                    newEngine.core.globals.player2Ship.y = y;
-                }
-            };
         });
+
+        this.hub.client.wingManMove = function(x, y, id) {
+            if (IsGameStarted) {
+                wingMan.x = x;
+                wingMan.y = y;
+            }
+        };
+
+        this.hub.client.wingManExplode = function(data) {
+            if (this.globals.IsGameStarted) {
+                this.globals.player2ShipMan.takeHit();
+                updateScore(2, "hit");
+            }
+        };
+
+        this.hub.client.wingmanBump = function() {
+            var effect = new bumpEffect(false);
+            this.globals.player1Ship.fx = effect;
+            this.globals.player1Ship.isUnderEffect = true;
+            console.log("bumped");
+        };
+
+        this.hub.client.setRockData = function(rock) {
+            this.globals.rocksArr[rock.index] = new spaceRock(rock);
+        };
+
+        this.hub.client.addRock = function(rock) {
+            if (this.globals.rocksArr.length < 20)
+                this.globals.rocksArr.push(rock);
+            if (DEBUG)
+                console.log("rockAdded - Array Length : ", this.globals.rocksArr.length);
+        };
+
+        this.hub.client.setRockArray = function(data) {
+            var i;
+            for (i = 0; i < data.length; i++) {
+                this.globals.rocksArr[i] = new spaceRock(data.X, data.Y, data.Speed, data.Angle, data.RotationSpeed, data.Width, data.Height);
+
+            }
+        }; 
+
+        this.hub.client.setBonusData = function(data) {
+            var now = moment().format('h:mm:ss');
+            updateBonus(data);
+        };
+
+        this.hub.client.startGame = function(playerIndex) {
+            switch (playerIndex) {
+                case 1:
+                    // this.globals.player1Ship.image.src = 'Images/spaceship1.png'
+                    this.globals.player1Ship.image.src = 'Images/New ship/tmp-35.gif';
+                    this.globals.player2Ship.image.src = 'Images/spaceship2.png';
+                    this.globals.player1Ship.Transform = true;
+                    this.globals.player1Ship.frameIndex = 0;
+
+                    break;
+                case 2:
+                    this.globals.player1Ship.image.src = 'Images/spaceship2.png';
+                    this.globals.player2Ship.image.src = 'Images/spaceship1.png';
+                    this.globals.player1Ship.x = this.globals.player2Ship.x;
+                    this.globals.player1Ship.y = this.globals.player2Ship.y;
+                    this.globals.player2Ship.x = this.globals.player1Ship.oldX;
+                    this.globals.player2Ship.y = this.globals.player1Ship.oldY;
+
+                    break;
+
+            }
+            showMessage("Click 'Esc' to exit the room !!!");
+            this.globals.backGroundSpeed = 2;
+            this.hub.server.initRockArray();
+            this.gameLoop();
+        };
+
+        this.hub.client.playerWait = function() {
+            showMessage("Wait for another player to arrive ...");
+            drawBackround();
+            drawScore.cores();
+            drawLifeBar(newEngine.core.globals.player1Ship.damageBar, 1);
+            drawLifeBar(wingMan.damageBar, 2);
+            drawPlayer(newEngine.core.globals.player1Ship);
+            drawPlayer(wingMan);
+        };
+
+        this.hub.client.redirectToLobby = function(urlTarget, msg) {
+            showMessage(msg);
+            FPS = 0;
+            window.location = urlTarget;
+        };
+
+        this.hub.client.playerTakeBonus = function(type, bonusIndex) {
+            bonusArr[bonusIndex].timeout = 0;
+            switch (type) {
+                case 0:
+                    updateSnewEngine.core(2, "bonus");
+                    break;
+                case 1:
+                    if (wingMan.fx) {
+                        wingMan.fx.clearFX(wingMan);
+                    }
+                    wingMan.isUnderEffect = true;
+                    var effect = new shieldsEffect();
+                    wingMan.fx = effect;
+                    break;
+                case 2:
+                    if (wingMan.fx) {
+                        wingMan.fx.clearFX(wingMan);
+                    }
+                    wingMan.isUnderEffect = true;
+                    var effect = new shrinkEffect(32);
+                    wingMan.fx = effect;
+                    break;
+                case 3:
+                    if (wingMan.fx) {
+                        wingMan.fx.clearFX(wingMan);
+                    }
+                    wingMan.isUnderEffect = true;
+                    var effect = new drunkEffect();
+                    wingMan.fx = effect;
+                    break;
+            }
+        };
+
+        this.hub.client.shipMoved = function(x, y, id) {
+            if (IsGameStarted) {
+                newEngine.core.globals.player2Ship.x = x;
+                newEngine.core.globals.player2Ship.y = y;
+            }
+        };
 
     };
 

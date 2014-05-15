@@ -67,10 +67,10 @@ var engine;
     };
 
     update.prototype.checkColision = function() { //make more generic collidable interface;
-        var i, deltax, deltay, dist, effect, weffect;
+        var i, deltax, deltay, dist, effect, weffect, shipCenter;
         if (!this.core.globals.player1Ship.isHit && !this.core.globals.player1Ship.shieldsUp) {
             // var shipCenter = getCenterPoint(this.core.globals.player1Ship);
-            var shipCenter = {x:50,y:50};
+            shipCenter = {x:50,y:50};
 
             // var wingManCenter = getCenterPoint(this.core.globals.player2Ship);
             var wingManCenter = {x:50,y:50};

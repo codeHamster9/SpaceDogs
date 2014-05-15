@@ -1,4 +1,4 @@
-﻿var engine;
+﻿var engine; 
 window.onload = function() {
     var newEngine = {};
     newEngine.core = new engine.core();
@@ -20,11 +20,6 @@ window.onload = function() {
         };
     }());
 
-    // window.requestAnimFrame = window.requestAnimationFrame ||
-    //     window.webkitRequestAnimationFrame ||
-    //     window.mozRequestAnimationFrame;
-
-
     var queryValues = getUrlVars();
     newEngine.core.globals.userId = queryValues["userId"];
     newEngine.core.globals.roomId = queryValues["roomId"];
@@ -35,11 +30,6 @@ window.onload = function() {
     if (newEngine.core.globals.userId == null) {
         newEngine.core.globals.userId = window.prompt("enterName", "guest");
     }
-
-
-
-
-
     newEngine.core.startEngine(newEngine.draw, newEngine.update);
 
     if (window.addEventListener) {
@@ -48,7 +38,7 @@ window.onload = function() {
     } else if (window.attachEvent) {
         newEngine.core.globals.canvas.attachEvent('onmousemove', newEngine.update.mouseMove.bind(newEngine));
         window.attachEvent('onkeydown', newEngine.update.whatKey.bind(newEngine));
-    }   
+    }
 }
 
 
