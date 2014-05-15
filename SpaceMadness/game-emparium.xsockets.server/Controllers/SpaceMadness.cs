@@ -16,6 +16,7 @@ namespace game_emparium.xsockets.server.Controllers
         private const string player1Msg = "leaving Room";
         private const string player2Msg = "player2 left the room, BYE BYE...";
         private const string lobbyUrl = "http://localhost:49950/Lobby/leaveRoom?roomId=";
+
         public void InitRock(int index)
         {
             Rock rock = RockService.getSingleRock(index);
@@ -24,8 +25,8 @@ namespace game_emparium.xsockets.server.Controllers
 
         public void InitRockArray()
         {
-            //   Rock[] data = RockService.InitRockArray();
-            // Clients.All.setRockArray(data);
+            //Rock[] data = RockService.InitRockArray();
+            //Clients.All.setRockArray(data);
             //Clients.Group("test").setRockArray(data);
         }
 
