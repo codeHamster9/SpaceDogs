@@ -712,7 +712,7 @@ function getCenterPoint(object) {
 }
 
 function showMessage(message) {
-    $("#ClientMessages").text(message).show();
+    document.getElementById("#ClientMessages").text(message).show();
 }
 
 //#endregion

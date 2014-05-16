@@ -43,7 +43,7 @@ namespace game_emparium.xsockets.server.Services
                 Debug.WriteLine("Type :" + data.bonusim[i].type + "Duration :" + data.bonusim[i].effectDuration);
             }
             data.bonusFactor = String.Format("ServerTime : {1} , Interval : {0} , ", bonusTimer.Interval / 1000, DateTime.Now.ToLongTimeString());
-            GlobalHost.ConnectionManager.GetHubContext<SpaceHub>().Clients.All.setBonusData(data);
+            //GlobalHost.ConnectionManager.GetHubContext<SpaceHub>().Clients.All.setBonusData(data);
         }
 
         static void TimeElapsed(object sender, ElapsedEventArgs e)

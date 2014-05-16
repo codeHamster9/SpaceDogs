@@ -3,12 +3,19 @@ using game_emparium.xsockets.server.Services;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using XSockets.Core.Common.Socket.Event.Arguments;
 using XSockets.Core.Common.Socket.Event.Interface;
 using XSockets.Core.XSocket;
 using XSockets.Core.XSocket.Helpers;
 
 namespace game_emparium.xsockets.server.Controllers
 {
+
+    public class Person
+    {
+        public int Age { get; set; }
+        public string Name { get; set; }
+    }
     public class SpaceMadness : XSocketController
     {
 
@@ -17,13 +24,24 @@ namespace game_emparium.xsockets.server.Controllers
         private const string player2Msg = "player2 left the room, BYE BYE...";
         private const string lobbyUrl = "http://localhost:49950/Lobby/leaveRoom?roomId=";
 
+        public SpaceMadness()
+        {
+            this.OnOpen += SpaceMadness_OnOpen;
+         
+        }
+
+        void SpaceMadness_OnOpen(object sender, OnClientConnectArgs e)
+        {
+            this.SendToAll("1", "startGame");
+        }
+
         public void InitRock(int index)
         {
             Rock rock = RockService.getSingleRock(index);
             this.SendToAll(rock, "setRockData");
         }
 
-        public void InitRockArray()
+        public void InitRockArray(ITextArgs textArgs)
         {
             //Rock[] data = RockService.InitRockArray();
             //Clients.All.setRockArray(data);
@@ -32,7 +50,7 @@ namespace game_emparium.xsockets.server.Controllers
 
         public void PlayerBump()
         {
-            this.SendToAllExceptMe(null, "wingmanBump");
+            this.SendToAll("", "wingmanBump");
         }
 
         public void PlayerExplode(int rockIndex)
@@ -55,21 +73,21 @@ namespace game_emparium.xsockets.server.Controllers
 
         public void EndGame(string roomId)
         {
-            var caller = Context.ConnectionId;
+            //var caller = Context.ConnectionId;
             List<Player> groupClients;
             //get the group
             if (players.TryGetValue(roomId, out groupClients))
             {
                 //find the caller
-                var player = groupClients.Where(p => p.ConnectionID.Equals(caller)).FirstOrDefault();
-                if (player != null)
+                //var player;// groupClients.Where(p => p.ConnectionID.Equals(caller)).FirstOrDefault();
+                if (players != null)
                 {
                     //notify game ended and redirect
                     var player1 = groupClients[0].ConnectionID;
                     var player2 = groupClients[1].ConnectionID;
-                    players.TryRemove(roomId, out groupClients);
-                    Clients.Client(player1).redirectToLobby(lobbyUrl + roomId, player1Msg);
-                    Clients.Client(player2).redirectToLobby(lobbyUrl + roomId, player2Msg);
+                    //players.TryRemove(roomId, out groupClients);
+                    //Clients.Client(player1).redirectToLobby(lobbyUrl + roomId, player1Msg);
+                    //Clients.Client(player2).redirectToLobby(lobbyUrl + roomId, player2Msg);
                 }
             }
         }
@@ -83,8 +101,8 @@ namespace game_emparium.xsockets.server.Controllers
                 if (groupClients.Count > 1)
                     groupClients.Clear();
                 //debug
-                
-                groupClients.Add(new Player { UserID = userId, ConnectionID = Context.ConnectionId, Score = 0 });
+
+                //groupClients.Add(new Player { UserID = userId, ConnectionID = Context.ConnectionId, Score = 0 });
                 players.TryAdd(roomId, groupClients);
                 if (players[roomId].Count == 2)
                 {
@@ -98,14 +116,14 @@ namespace game_emparium.xsockets.server.Controllers
                 }
                 else
                 {
-                    Clients.Caller.playerWait();
+                    //Clients.Caller.playerWait();
                 }
             }
             else
             {
-                players.TryAdd(roomId, new List<Player>() { new Player { UserID = userId, ConnectionID = Context.ConnectionId, Score = 0 } });
-                Clients.Caller.playerWait();
-                this.
+                //players.TryAdd(roomId, new List<Player>() { new Player { UserID = userId, ConnectionID = Context.ConnectionId, Score = 0 } });
+                this.SendToAll("", "playerWait");
+
             }
         }
     }

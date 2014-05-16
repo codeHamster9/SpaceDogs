@@ -3,21 +3,21 @@
 
 <head>
     <title></title>
-    <script src="Scripts/jquery-2.0.0.js"></script>
-    <script src="Scripts/jquery.signalR-2.0.3.min.js"></script>
-    <script src="signalr/hubs" type="text/javascript"></script>
+    <script src="Scripts/XSockets.latest.js"></script>
     <script src="core/engine.core.js"></script>
     <script src="core/engine.draw.js"></script>
     <script src="core/engine.update.js"></script>
     <script src="core/bonusItem.js"></script>
-    <script src="core/spacerock.js"></script>
-    <script src="core/effects.js"></script>
-    <script src="core/bumpFX.js"></script>
-    <script src="core/shieldFX.js"></script>
-    <script src="core/shrinkEffect.js"></script>
     <script src="core/ship.js"></script>
+    <script src="core/spacerock.js"></script>
+    <script src="core/fx.base.js"></script>
+    <script src="core/fx.bump.js"></script>
+    <script src="core/fx.drunk.js"></script>
+    <script src="core/fx.shield.js"></script>
+    <script src="core/fx.shrink.js"></script>
     <script src="Scripts/main.js"></script>
 </head>
+
 <body>
     <canvas id="myCanvas" width="900" height="500"></canvas>
     <br />
@@ -29,6 +29,7 @@
     <div style="background-color: lightgray">
         <label id="ClientMessages" style="font-family: 'Courier New', Courier, 'Nimbus Mono L', monospace; font-size: xx-large; font-weight: 400"></label>
     </div>
-    
+
 </body>
+
 </html>

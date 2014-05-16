@@ -54,6 +54,6 @@ var effects;
 
     }(effects.effectBase));
 
-    effects.BumpEffect = bumpFX;
+    effects.bumpEffect = bumpFX;
 
 }(effects));

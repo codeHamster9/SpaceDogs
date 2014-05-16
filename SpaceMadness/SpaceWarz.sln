@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceWarz", "SpaceWarz\SpaceWarz.csproj", "{8844B34C-FAE3-4D48-B76E-7A5D40D243F8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceMadness", "SpaceWarz\SpaceMadness.csproj", "{8844B34C-FAE3-4D48-B76E-7A5D40D243F8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameLobby", "GameLobby\GameLobby.csproj", "{EE229026-4929-4EA0-A747-07AF1C3DB2FF}"
 EndProject

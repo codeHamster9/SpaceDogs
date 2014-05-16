@@ -70,13 +70,22 @@ var engine;
         var i, deltax, deltay, dist, effect, weffect, shipCenter;
         if (!this.core.globals.player1Ship.isHit && !this.core.globals.player1Ship.shieldsUp) {
             // var shipCenter = getCenterPoint(this.core.globals.player1Ship);
-            shipCenter = {x:50,y:50};
+            shipCenter = {
+                x: 50,
+                y: 50
+            };
 
             // var wingManCenter = getCenterPoint(this.core.globals.player2Ship);
-            var wingManCenter = {x:50,y:50};
+            var wingManCenter = {
+                x: 50,
+                y: 50
+            };
             for (i = 0; i < this.core.globals.rocksArr.length; ++i) {
                 // var rockCenter = getCenterPoint(this.core.globals.rocksArr[i]);
-                var rockCenter = {x:50,y:50};
+                var rockCenter = {
+                    x: 50,
+                    y: 50
+                };
                 deltax = shipCenter.x - rockCenter.x;
                 deltay = shipCenter.y - rockCenter.y;
                 dist = Math.sqrt(deltax * deltax + deltay * deltay);
@@ -226,7 +235,10 @@ var engine;
                 this.core.globals.player1Ship.x = this.core.globals.player1Ship.oldX;
                 this.core.globals.player1Ship.y = this.core.globals.player1Ship.oldY;
             } else {
-                this.core.hub.server.moveShip(this.core.globals.player1Ship.x, this.core.globals.player1Ship.y, "");
+                this.core.hub.publish("moveShip", {
+                    x: this.core.globals.player1Ship.x,
+                    y: this.core.globals.player1Ship.y,
+                });
             }
         }
     };

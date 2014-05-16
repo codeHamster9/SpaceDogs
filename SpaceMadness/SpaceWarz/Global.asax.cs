@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Infrastructure;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -45,7 +43,6 @@ namespace SpaceWarz
 
         protected void Application_End(object sender, EventArgs e)
         {
-            SpaceHub.players.Clear();
         }
 
     }

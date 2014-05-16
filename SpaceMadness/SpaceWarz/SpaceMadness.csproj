@@ -45,14 +45,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.0.3\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.0.3\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Owin">
       <HintPath>..\packages\Microsoft.Owin.2.0.2\lib\net45\Microsoft.Owin.dll</HintPath>
@@ -186,32 +178,29 @@
     <Content Include="Images\space_background.jpg" />
     <Content Include="main.html" />
     <Content Include="packages.config" />
-    <Content Include="Scripts\date.js" />
-    <Content Include="Scripts\jquery-2.0.0.js" />
-    <Content Include="Scripts\jquery-2.0.0.min.js" />
-    <Content Include="Scripts\jquery-2.0.0.min.map" />
-    <Content Include="Scripts\jquery.signalR-2.0.3.js" />
-    <Content Include="Scripts\jquery.signalR-2.0.3.min.js" />
     <Content Include="Scripts\main.js" />
-    <Content Include="Scripts\moment.js" />
+    <Content Include="Scripts\XSockets.fallback.latest.js" />
+    <Content Include="Scripts\XSockets.fallback.latest.min.js" />
+    <Content Include="Scripts\XSockets.latest.js" />
+    <Content Include="Scripts\XSockets.latest.min.js" />
+    <Content Include="Scripts\XSockets.WebAPI.fallback.latest.js" />
+    <Content Include="Scripts\XSockets.WebAPI.fallback.latest.min.js" />
+    <Content Include="Scripts\XSockets.WebRTC.latest.js" />
+    <Content Include="Scripts\XSockets.WebRTC.latest.min.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entities\BonusData.cs" />
-    <Compile Include="Entities\BonusItem.cs" />
-    <Compile Include="Entities\Player.cs" />
-    <Compile Include="Entities\Rock.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="HubServices\BonusService.cs" />
-    <Compile Include="HubServices\RockService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="spaceHub.cs" />
     <Compile Include="Startup1.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Scripts\jquery-2.0.0.intellisense.js" />
+    <Content Include="Scripts\XSockets.WebRTC.latest.min.js.map" />
+    <Content Include="Scripts\XSockets.WebAPI.fallback.latest.min.js.map" />
+    <Content Include="Scripts\XSockets.latest.min.js.map" />
+    <Content Include="Scripts\XSockets.fallback.latest.min.js.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
