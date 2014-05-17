@@ -27,7 +27,7 @@ namespace game_emparium.xsockets.server.Controllers
         public SpaceMadness()
         {
             this.OnOpen += SpaceMadness_OnOpen;
-         
+
         }
 
         void SpaceMadness_OnOpen(object sender, OnClientConnectArgs e)
@@ -43,9 +43,8 @@ namespace game_emparium.xsockets.server.Controllers
 
         public void InitRockArray(ITextArgs textArgs)
         {
-            //Rock[] data = RockService.InitRockArray();
-            //Clients.All.setRockArray(data);
-            //Clients.Group("test").setRockArray(data);
+            Rock[] data = RockService.InitRockArray();
+            this.SendToAll(data, "setRockArray");
         }
 
         public void PlayerBump()
@@ -65,10 +64,10 @@ namespace game_emparium.xsockets.server.Controllers
             this.SendToAllExceptMe(textargs, "wingManExplode");
         }
 
-        public void MoveShip(ITextArgs textArgs)
+        public void MoveShip(int x, int y, int id)
         {
-            //Clients.Others.shipMoved(x, y, id);
-            this.SendToAllExceptMe(textArgs, "shipMoved");
+
+            this.SendToAll(new Point(x, y), "shipMoved");
         }
 
         public void EndGame(string roomId)
@@ -122,9 +121,21 @@ namespace game_emparium.xsockets.server.Controllers
             else
             {
                 //players.TryAdd(roomId, new List<Player>() { new Player { UserID = userId, ConnectionID = Context.ConnectionId, Score = 0 } });
-                this.SendToAll("", "playerWait");
+                this.SendToAll("", "startGame");
 
             }
         }
+    }
+
+    public struct Point
+    {
+        public Point(int _x, int _y)
+            : this()
+        {
+            this.X = _x;
+            this.Y = _y;
+        }
+        public int X { get; set; }
+        public int Y { get; set; }
     }
 }

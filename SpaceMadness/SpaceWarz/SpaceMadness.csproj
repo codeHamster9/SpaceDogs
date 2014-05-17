@@ -81,16 +81,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="core\bonusItem.js" />
-    <Content Include="core\bumpFX.js" />
-    <Content Include="core\drunkFX.js" />
-    <Content Include="core\effects.js" />
     <Content Include="core\engine.core.js" />
     <Content Include="core\engine.draw.js" />
     <Content Include="core\engine.update.js" />
+    <Content Include="core\fx.base.js" />
+    <Content Include="core\fx.bump.js" />
+    <Content Include="core\fx.drunk.js" />
+    <Content Include="core\fx.shield.js" />
+    <Content Include="core\fx.shrink.js" />
     <Content Include="core\main.js" />
-    <Content Include="core\shieldFX.js" />
     <Content Include="core\ship.js" />
-    <Content Include="core\shrinkEffect.js" />
     <Content Include="core\spacerock.js" />
     <Content Include="Global.asax" />
     <Content Include="Images\bonus1.png" />
@@ -177,8 +177,9 @@
     <Content Include="Images\spaceship2.png" />
     <Content Include="Images\space_background.jpg" />
     <Content Include="main.html" />
-    <Content Include="packages.config" />
-    <Content Include="Scripts\main.js" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Scripts\XSockets.fallback.latest.js" />
     <Content Include="Scripts\XSockets.fallback.latest.min.js" />
     <Content Include="Scripts\XSockets.latest.js" />

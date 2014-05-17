@@ -100,21 +100,21 @@ var engine;
 
     draw.prototype.drawBonus = function () {
 
-        $.each(this.core.globals.bonusArr, function (index, bonusItem) {
-            if (bonusItem.timeout > 0) {
-                this.core.globals.context.drawImage(this.core.globals.imageBonus, bonusItem.x, bonusItem.y);
-                bonusItem.timeout--;
+        for (var i = this.core.globals.bonusArr.length - 1; i >= 0; i--) {
+           if (this.core.globals.bonusArr[i].timeout > 0) {
+                this.core.globals.context.drawImage(this.core.globals.imageBonus, this.core.globals.bonusArr[i].x, this.core.globals.bonusArr[i].y);
+                this.core.globals.bonusArr[i].timeout--;
             }
-        });
+        };
     };
 
     draw.prototype.drawRocks = function () {
         var i = 0;
         for (i; i < this.core.globals.rocksArr.length; ++i) {
-            this.drawRotatedImage(this.core.globals.imageRock, this.core.globals.rockArr[i]);
+            this.drawRotatedImage(this.core.globals.imageRock, this.core.globals.rocksArr[i]);
             this.core.globals.rocksArr[i].angle += this.core.globals.rocksArr[i].rotationSpeed;
             if (this.core.globals.rocksArr[i].y > 500) {
-                this.core.hub.server.initRock(i);
+                this.core.ws.publish("initRock",i);
             } else {
                 this.core.globals.rocksArr[i].y = this.core.globals.rocksArr[i].y + this.core.globals.rocksArr[i].speed;
             }

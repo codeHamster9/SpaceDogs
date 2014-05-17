@@ -25,14 +25,14 @@ namespace game_emparium.xsockets.server.Services
             {
                 rockArray[i] = new Rock()
                 {
-                    X = Math.Round(RandomEngine.NextDouble() * RockMaxX) + RockMinX,
-                    Y = 0,
-                    Speed = Math.Round(RandomEngine.NextDouble() * (SpeedMax * RockSpeedFactor)) + SpeedPadding,
-                    Angle = Math.Floor(RandomEngine.NextDouble() * 180) + 1,
-                    RotationSpeed = Math.Floor(RandomEngine.NextDouble() * 4) + 1,
-                    Index = i,
-                    Height = RandomEngine.Next(3,7) * 10,
-                    Width = RandomEngine.Next(3,7) * 10
+                    x = Math.Round(RandomEngine.NextDouble() * RockMaxX) + RockMinX,
+                    y = 0,
+                    speed = Math.Round(RandomEngine.NextDouble() * (SpeedMax * RockSpeedFactor)) + SpeedPadding,
+                    angle = Math.Floor(RandomEngine.NextDouble() * 180) + 1,
+                    rotationSpeed = Math.Floor(RandomEngine.NextDouble() * 4) + 1,
+                    index = i,
+                    height = RandomEngine.Next(3,7) * 10,
+                    width = RandomEngine.Next(3,7) * 10
                 };
             }
             return rockArray;
@@ -42,14 +42,14 @@ namespace game_emparium.xsockets.server.Services
         {
             Rock rock = new Rock()
             {
-                X = Math.Round(RandomEngine.NextDouble() * RockMaxX) + RockMinX,
-                Y = 0,
-                Speed = Math.Round(RandomEngine.NextDouble() * (SpeedMax * RockSpeedFactor)) + SpeedPadding,
-                Angle = Math.Floor(RandomEngine.NextDouble() * 180) + 1,
-                RotationSpeed = Math.Floor(RandomEngine.NextDouble() * 4) + 1,
-                Index = index,
-                Height = RandomEngine.Next(4, 8) * 10,
-                Width = RandomEngine.Next(4, 8) * 10
+                x = Math.Round(RandomEngine.NextDouble() * RockMaxX) + RockMinX,
+                y = 0,
+                speed = Math.Round(RandomEngine.NextDouble() * (SpeedMax * RockSpeedFactor)) + SpeedPadding,
+                angle = Math.Floor(RandomEngine.NextDouble() * 180) + 1,
+                rotationSpeed = Math.Floor(RandomEngine.NextDouble() * 4) + 1,
+                index = index,
+                height = RandomEngine.Next(4, 8) * 10,
+                width = RandomEngine.Next(4, 8) * 10
             };
             return rock;
         }
