@@ -89,7 +89,7 @@
         }
     };
 
-    core.prototype.initHubConnection = function() {
+    core.prototype.initServerConnection = function() {
         var qs = "roomId=1" + "&userId=2",
             that = this;
 
@@ -126,30 +126,17 @@
             console.log("bumped");
         });
 
-        this.ws.on("setRockData", function(rock) {
-            this.globals.rocksArr[rock.index] = new spaceRock(rock);
-        });
-
-        this.ws.on("addRock", function(rock) {
-            if (that.globals.rocksArr.length < 20) {
-                that.globals.rocksArr.push(rock);
-            }
-            if (DEBUG) {
-                console.log("rockAdded - Array Length : ", that.globals.rocksArr.length);
-            }
-        });
+        this.ws.on("addNewRock", function(rock) {
+            that.globals.rocksArr[rock.index] = new engine.spaceRock(rock);
+        });    
 
         this.ws.on("setRockArray", function(data) {
             var i;
-            // for (i = 0; i < data.length; i++) {
-            //     that.globals.rocksArr[i] = new engine.spaceRock(data.X, data.Y, data.Speed, data.Angle, data.RotationSpeed, data.Width, data.Height);
-
-            // }
              that.globals.rocksArr = data;
         });
 
         this.ws.on("setBonusData", function(data) {
-            updateBonus(data);
+            that.update.updateBonus(data);
         });
 
         this.ws.on("startGame", function(playerIndex) {
@@ -173,7 +160,7 @@
                     break;
 
             }
-            //showMessage("Click 'Esc' to exit the room !!!");
+            window.showMessage("Click 'Esc' to exit the room !!!");
             that.globals.backGroundSpeed = 2;
             that.ws.publish("initRockArray");
             that.globals.IsGameStarted = true;
@@ -281,9 +268,7 @@
         this.globals.context = this.globals.canvas.getContext('2d');
         this.initPlayers();
         this.initAnimations();
-        this.initHubConnection();
-        // this.gameloop();
-        // window.requestAnimFrame(this.gameloop(draw,update));
+        this.initServerConnection();      
     };
 
     engine.core = core;

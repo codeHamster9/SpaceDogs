@@ -1,4 +1,4 @@
-﻿function extend(subClass, superClass) {
+﻿/*function extend(subClass, superClass) {
     var F = function () { };
     F.prototype = new F();
     subClass.prototype = new F();
@@ -8,7 +8,7 @@
     if (superClass.prototype.constructor == Object.prototype.constructor) {
         superClass.prototype.constructor = superClass;
     }
-}
+}*/
 
 
 var effects;
@@ -38,9 +38,7 @@ var effects;
         };
 
         DrunkEffect.prototype.clearFX = function (ship) {
-            ship.isUnderEffect = false;
-            ship.fx = null;
-            //onScreenText = "";
+           effectBase.prototype.clearFX.call(this,ship);
         };
 
         return DrunkEffect;

@@ -12,17 +12,14 @@ namespace game_emparium.xsockets.server.Services
     {
         //TODO: give access to players Dictionary
         static Random RandomEngine = new Random();
-        public static readonly System.Timers.Timer bonusTimer = new System.Timers.Timer();
 
 
         static BonusService()
         {
-            bonusTimer.Interval = Math.Floor(RandomEngine.NextDouble() * 30000) + 3000;
-            bonusTimer.Elapsed += new ElapsedEventHandler(TimeElapsed);
-            bonusTimer.Enabled = true;
+
         }
 
-        static void InitBonusData()
+        public static BonusData InitBonusData()
         {
             //TODO: broadcast to specific Group
             BonusData data = new BonusData(RandomEngine.Next(1, 4));
@@ -40,16 +37,19 @@ namespace game_emparium.xsockets.server.Services
 
                 };
 
-                Debug.WriteLine("Type :" + data.bonusim[i].type + "Duration :" + data.bonusim[i].effectDuration);
+                
             }
-            data.bonusFactor = String.Format("ServerTime : {1} , Interval : {0} , ", bonusTimer.Interval / 1000, DateTime.Now.ToLongTimeString());
+            //data.bonusFactor = String.Format("ServerTime : {1} , Interval : {0} , ", bonusTimer.Interval / 1000, DateTime.Now.ToLongTimeString());
             //GlobalHost.ConnectionManager.GetHubContext<SpaceHub>().Clients.All.setBonusData(data);
+         
+            foreach (var bonus in data.bonusim)
+            {
+                Debug.Write("type :" + " " + bonus.type + " " + "duration : " + " " + bonus.effectDuration + " ");
+            }
+            Debug.WriteLine(DateTime.Now);
+            return data;
         }
 
-        static void TimeElapsed(object sender, ElapsedEventArgs e)
-        {
-            InitBonusData();
-            bonusTimer.Interval = Math.Floor(RandomEngine.NextDouble() * 30000) + 3000;
-        }
+
     }
 }

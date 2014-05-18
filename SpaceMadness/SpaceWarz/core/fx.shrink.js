@@ -1,7 +1,4 @@
-﻿/// <reference path="effects.js" />
-
-
-function extend(subClass, superClass) {
+﻿/*function extend(subClass, superClass) {
     var F = function () { };
     F.prototype = new F();
     subClass.prototype = new F();
@@ -11,7 +8,7 @@ function extend(subClass, superClass) {
     if (superClass.prototype.constructor == Object.prototype.constructor) {
         superClass.prototype.constructor = superClass;
     }
-}
+}*/
 
 var effects;
 (function (effects) {
@@ -20,20 +17,18 @@ var effects;
         function ShrinkEffect(limit) {
             this.duration = 420;
             this.type = "shrink";
-            this.effectLimit = limit;
-            this.onScreenText = "";
-            effectBase.superclass.constructor.call(this, this.type, this.duration);
+            this.effectLimit = limit || 32;
+            effectBase.prototype.constructor.call(this, this.type, this.duration);
         }
 
         extend(ShrinkEffect, effectBase);
 
         ShrinkEffect.prototype.clearFX = function (ship) {
-            console.log(ship.id);
-            ship.isUnderEffect = false;
-            ship.fx = null;
+            console.log(ship.id);         
             ship.height = 60;
             ship.width = 60;
-            this.onScreenText = "";
+            effectBase.prototype.clearFX.call(this,ship);
+
         };
 
         ShrinkEffect.prototype.apply = function (ship) {

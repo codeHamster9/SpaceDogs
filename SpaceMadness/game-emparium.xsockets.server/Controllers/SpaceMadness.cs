@@ -3,6 +3,8 @@ using game_emparium.xsockets.server.Services;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Dynamic;
+using System.Timers;
 using XSockets.Core.Common.Socket.Event.Arguments;
 using XSockets.Core.Common.Socket.Event.Interface;
 using XSockets.Core.XSocket;
@@ -23,10 +25,18 @@ namespace game_emparium.xsockets.server.Controllers
         private const string player1Msg = "leaving Room";
         private const string player2Msg = "player2 left the room, BYE BYE...";
         private const string lobbyUrl = "http://localhost:49950/Lobby/leaveRoom?roomId=";
+        readonly System.Timers.Timer bonusTimer;
+        Random RandomEngine;
+
 
         public SpaceMadness()
         {
+            RandomEngine = new Random();
+            bonusTimer = new System.Timers.Timer();
             this.OnOpen += SpaceMadness_OnOpen;
+            bonusTimer.Interval = Math.Floor(RandomEngine.NextDouble() * 30000) + 3000;
+            bonusTimer.Elapsed += new ElapsedEventHandler(TimeElapsed);
+            bonusTimer.Enabled = true;
 
         }
 
@@ -35,61 +45,6 @@ namespace game_emparium.xsockets.server.Controllers
             this.SendToAll("1", "startGame");
         }
 
-        public void InitRock(int index)
-        {
-            Rock rock = RockService.getSingleRock(index);
-            this.SendToAll(rock, "setRockData");
-        }
-
-        public void InitRockArray(ITextArgs textArgs)
-        {
-            Rock[] data = RockService.InitRockArray();
-            this.SendToAll(data, "setRockArray");
-        }
-
-        public void PlayerBump()
-        {
-            this.SendToAll("", "wingmanBump");
-        }
-
-        public void PlayerExplode(int rockIndex)
-        {
-            InitRock(rockIndex);
-            this.SendToAllExceptMe(null, "wingManExplode");
-        }
-
-        //public void PlayerTakesBonus(int type, int bonusIndex)
-        public void PlayerTakesBonus(ITextArgs textargs)
-        {
-            this.SendToAllExceptMe(textargs, "wingManExplode");
-        }
-
-        public void MoveShip(int x, int y, int id)
-        {
-
-            this.SendToAll(new Point(x, y), "shipMoved");
-        }
-
-        public void EndGame(string roomId)
-        {
-            //var caller = Context.ConnectionId;
-            List<Player> groupClients;
-            //get the group
-            if (players.TryGetValue(roomId, out groupClients))
-            {
-                //find the caller
-                //var player;// groupClients.Where(p => p.ConnectionID.Equals(caller)).FirstOrDefault();
-                if (players != null)
-                {
-                    //notify game ended and redirect
-                    var player1 = groupClients[0].ConnectionID;
-                    var player2 = groupClients[1].ConnectionID;
-                    //players.TryRemove(roomId, out groupClients);
-                    //Clients.Client(player1).redirectToLobby(lobbyUrl + roomId, player1Msg);
-                    //Clients.Client(player2).redirectToLobby(lobbyUrl + roomId, player2Msg);
-                }
-            }
-        }
 
         public void JoinGame(string userId, string roomId)
         {
@@ -125,6 +80,64 @@ namespace game_emparium.xsockets.server.Controllers
 
             }
         }
+        public void EndGame(string roomId)
+        {
+            //var caller = Context.ConnectionId;
+            List<Player> groupClients;
+            //get the group
+            if (players.TryGetValue(roomId, out groupClients))
+            {
+                //find the caller
+                //var player;// groupClients.Where(p => p.ConnectionID.Equals(caller)).FirstOrDefault();
+                if (players != null)
+                {
+                    //notify game ended and redirect
+                    var player1 = groupClients[0].ConnectionID;
+                    var player2 = groupClients[1].ConnectionID;
+                    //players.TryRemove(roomId, out groupClients);
+                    //Clients.Client(player1).redirectToLobby(lobbyUrl + roomId, player1Msg);
+                    //Clients.Client(player2).redirectToLobby(lobbyUrl + roomId, player2Msg);
+                }
+            }
+        }
+        public void InitRockArray(ITextArgs textArgs)
+        {
+            Rock[] data = RockService.InitRockArray();
+            this.SendToAll(data, "setRockArray");
+        }
+        public void GetNewRock(int index)
+        {
+            Rock rock = RockService.getSingleRock(index);
+            this.SendToAll(rock, "addNewRock");
+        }
+        public void MoveShip(int x, int y, int id)
+        {
+            this.SendToAll(new Point(x, y), "shipMoved");
+        }
+        public void PlayerBump()
+        {
+            this.SendToAll("", "wingmanBump");
+        }
+        public void PlayerExplode(int index)
+        {
+            GetNewRock(index);
+            this.SendToAllExceptMe(null, "wingManExplode");
+        }
+        public void PlayerTakesBonus(int type, int index)
+        {
+            dynamic data = new ExpandoObject();
+            data.type = type;
+            data.bonusIndex = index;
+            this.SendToAll((Object)data, "wingManExplode");
+        }
+
+        void TimeElapsed(object sender, ElapsedEventArgs e)
+        {
+            var data = BonusService.InitBonusData();
+            this.SendToAll(data.bonusim, "setBonusData");
+            bonusTimer.Interval = Math.Floor(RandomEngine.NextDouble() * 300000) + 3000;
+        }
+
     }
 
     public struct Point

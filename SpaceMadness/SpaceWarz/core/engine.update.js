@@ -1,27 +1,29 @@
-var engine;
+var engine,effects;
 (function(engine) {
+    var cglbl;
     var update = (function(core) {
 
         function update(core) {
             this.core = core;
+            cglbl = core.globals;
         }
         return update;
     }());
 
     update.prototype.updateBonus = function(data) {
-        if (IsGameStarted) {
-            //this.core.globals.bonusArr = data;
+        if (cglbl.IsGameStarted) {
+            //cglbl.bonusArr = data;
             var i;
-            for (i = 0; i < data.bonusim.length; i++) {
-                this.core.globals.bonusArr[i] = new bonusItem();
-                this.core.globals.bonusArr[i].x = data.bonusim[i].x;
-                this.core.globals.bonusArr[i].y = data.bonusim[i].y;
-                this.core.globals.bonusArr[i].timeout = data.bonusim[i].timeout;
-                this.core.globals.bonusArr[i].value = data.bonusim[i].value;
-                this.core.globals.bonusArr[i].type = data.bonusim[i].type;
-                this.core.globals.bonusArr[i].effectDuration = data.bonusim[i].effectDuration;
-                this.core.globals.bonusArr[i].width = imageBonus.width;
-                this.core.globals.bonusArr[i].height = imageBonus.height;
+            for (i = 0; i < data.length; i++) {
+                cglbl.bonusArr[i] = new bonusItem();
+                cglbl.bonusArr[i].x = data[i].x;
+                cglbl.bonusArr[i].y = data[i].y;
+                cglbl.bonusArr[i].timeout = data[i].timeout;
+                cglbl.bonusArr[i].value = data[i].value;
+                cglbl.bonusArr[i].type = data[i].type;
+                cglbl.bonusArr[i].effectDuration = data[i].effectDuration;
+                cglbl.bonusArr[i].width = cglbl.imageBonus.width;
+                cglbl.bonusArr[i].height = cglbl.imageBonus.height;
             }
         }
     };
@@ -42,17 +44,17 @@ var engine;
             case "hit":
                 switch (playerIndex) {
                     case 1:
-                        if (this.core.globals.scorePlayer1 > 500) {
-                            this.core.globals.scorePlayer1 -= 500;
+                        if (cglbl.scorePlayer1 > 500) {
+                            cglbl.scorePlayer1 -= 500;
                         } else {
-                            this.core.globals.scorePlayer1 = 0;
+                            cglbl.scorePlayer1 = 0;
                         }
                         break;
                     case 2:
-                        if (this.core.globals.scorePlayer2 > 500) {
-                            this.core.globals.scorePlayer2 -= 500;
+                        if (cglbl.scorePlayer2 > 500) {
+                            cglbl.scorePlayer2 -= 500;
                         } else {
-                            this.core.globals.scorePlayer2 = 0;
+                            cglbl.scorePlayer2 = 0;
                         }
                         break;
                 }
@@ -68,92 +70,96 @@ var engine;
 
     update.prototype.checkColision = function() { //make more generic collidable interface;
         var i, deltax, deltay, dist, effect, weffect, shipCenter, center, rockCenter;
-        if (!this.core.globals.player1Ship.isHit && !this.core.globals.player1Ship.shieldsUp) {
-             var shipCenter = getCenterPoint(this.core.globals.player1Ship);
+        if (!cglbl.player1Ship.isHit && !cglbl.player1Ship.shieldsUp) {
+            var shipCenter = getCenterPoint(cglbl.player1Ship);
 
-            var wingManCenter = getCenterPoint(this.core.globals.player2Ship);
-            
-            for (i = 0; i < this.core.globals.rocksArr.length; ++i) {
-                rockCenter = getCenterPoint(this.core.globals.rocksArr[i]);
+            var wingManCenter = getCenterPoint(cglbl.player2Ship);
+
+            for (i = 0; i < cglbl.rocksArr.length; ++i) {
+                rockCenter = getCenterPoint(cglbl.rocksArr[i]);
                 deltax = shipCenter.x - rockCenter.x;
                 deltay = shipCenter.y - rockCenter.y;
                 dist = Math.sqrt(deltax * deltax + deltay * deltay);
                 if (dist < 30) {
                     this.updateScore(1, "hit");
-                    this.core.globals.player1Ship.explode(i);
+                    cglbl.player1Ship.explode(i);
                 }
             }
-            if (!this.core.globals.isHelmsLocked) {
-                deltax = shipCenter.x - this.core.globals.player2Ship.x;
-                deltay = shipCenter.y - this.core.globals.player2Ship.y;
+            if (!cglbl.isHelmsLocked) {
+                deltax = shipCenter.x - cglbl.player2Ship.x;
+                deltay = shipCenter.y - cglbl.player2Ship.y;
                 dist = Math.sqrt(deltax * deltax + deltay * deltay);
                 if (dist < 30) {
                     isHelmsLocked = true;
                     //updateSthis.core(1, "hit");
                     console.log("player collide");
-                    if (this.core.globals.player1Ship.x > this.core.globals.player2Ship.x) {
-                        effect = new bumpEffect(true);
-                        this.core.globals.player1Ship.isUnderEffect = true;
-                        this.core.globals.player1Ship.fx = effect;
-                        weffect = new bumpEffect(false);
-                        this.core.globals.player2Ship.isUnderEffect = true;
-                        this.core.globals.player2Ship.fx = weffect;
+                    if (cglbl.player1Ship.x > cglbl.player2Ship.x) {
+                        effect = new effects.bumpEffect(true);
+                        cglbl.player1Ship.isUnderEffect = true;
+                        cglbl.player1Ship.fx = effect;
+                        weffect = new effects.bumpEffect(false);
+                        cglbl.player2Ship.isUnderEffect = true;
+                        cglbl.player2Ship.fx = weffect;
                     } else {
-                        effect = new bumpEffect(false);
-                        this.core.globals.player1Ship.isUnderEffect = true;
-                        this.core.globals.player1Ship.fx = effect;
-                        weffect = new bumpEffect(true);
-                        this.core.globals.player2Ship.isUnderEffect = true;
-                        this.core.globals.player2Ship.fx = weffect;
+                        effect = new effects.bumpEffect(false);
+                        cglbl.player1Ship.isUnderEffect = true;
+                        cglbl.player1Ship.fx = effect;
+                        weffect = new effects.bumpEffect(true);
+                        cglbl.player2Ship.isUnderEffect = true;
+                        cglbl.player2Ship.fx = weffect;
                     }
-                    //this.core.globals.player1Ship.explode(i);
+                    //cglbl.player1Ship.explode(i);
                 }
             }
         }
 
-        for (i = 0; i < this.core.globals.bonusArr.length; ++i) {
-            if (this.core.globals.bonusArr[i].timeout > 0) {
-                center = getCenterPoint(this.core.globals.bonusArr[i]);
+        for (i = 0; i < cglbl.bonusArr.length; ++i) {
+            if (cglbl.bonusArr[i].timeout > 0) {
+                //TODO:move getCenter to server
+                center = getCenterPoint(cglbl.bonusArr[i]);
 
                 // chekc if bonusItem is Taken
-                if (center.x >= this.core.globals.player1Ship.x - 10 && center.x <= this.core.globals.player1Ship.x + 70) {
-                    if (center.y + 25 >= this.core.globals.player1Ship.y + 10 && center.y + 25 <= this.core.globals.player1Ship.y + 80) {
-                        this.core.globals.bonusArr[i].timeout = 0;
-                        if (this.core.globals.bonusArr[i].type == 0) {
+                if (center.x >= cglbl.player1Ship.x - 10 && center.x <= cglbl.player1Ship.x + 70) {
+                    if (center.y + 25 >= cglbl.player1Ship.y + 10 && center.y + 25 <= cglbl.player1Ship.y + 80) {
+                        cglbl.bonusArr[i].timeout = 0;
+                        if (cglbl.bonusArr[i].type == 0) {
                             this.updateScore(1, "bonus");
                             console.log("points");
-                        } else switch (this.core.globals.bonusArr[i].type) {
-                            case 1:
-                                if (this.core.globals.player1Ship.fx) {
-                                    this.core.globals.player1Ship.fx.clearFX(this.core.globals.player1Ship);
+                        } else switch (cglbl.bonusArr[i].type) {
+                            case "Shield":
+                                if (cglbl.player1Ship.fx) {
+                                    cglbl.player1Ship.fx.clearFX(cglbl.player1Ship);
                                 }
 
-                                this.core.globals.player1Ship.isUnderEffect = true;
-                                effect = new shieldsEffect();
-                                this.core.globals.player1Ship.fx = effect;
-                                onScreenText = "Shields Up!";
+                                cglbl.player1Ship.isUnderEffect = true;
+                                effect = new effects.shieldEffect();
+                                cglbl.player1Ship.fx = effect;
+                                cglbl.onScreenText = "Shields Up!";
                                 break;
-                            case 2:
-                                if (this.core.globals.player1Ship.fx) {
-                                    this.core.globals.player1Ship.fx.clearFX(this.core.globals.player1Ship);
+                            case "Shrink":
+                                if (cglbl.player1Ship.fx) {
+                                    cglbl.player1Ship.fx.clearFX(cglbl.player1Ship);
                                 }
-                                this.core.globals.player1Ship.isUnderEffect = true;
-                                effect = new shrinkEffect(32);
-                                this.core.globals.player1Ship.fx = effect;
-                                onScreenText = "Shrink Ray!";
+                                cglbl.player1Ship.isUnderEffect = true;
+                                effect = new effects.shrinkEffect(32);
+                                cglbl.player1Ship.fx = effect;
+                                cglbl.onScreenText = "Shrink Ray!";
                                 break;
-                            case 3:
+                            case "Drunk":
 
-                                if (this.core.globals.player1Ship.fx) {
-                                    this.core.globals.player1Ship.fx.clearFX(this.core.globals.player1Ship);
+                                if (cglbl.player1Ship.fx) {
+                                    cglbl.player1Ship.fx.clearFX(cglbl.player1Ship);
                                 }
-                                this.core.globals.player1Ship.isUnderEffect = true;
-                                effect = new drunkEffect(3);
-                                this.core.globals.player1Ship.fx = effect;
-                                onScreenText = "Drunk Driving!";
+                                cglbl.player1Ship.isUnderEffect = true;
+                                effect = new effects.drunkEffect(3);
+                                cglbl.player1Ship.fx = effect;
+                                cglbl.onScreenText = "Drunk Driving!";
                                 break;
                         }
-                        ws.publish.playerTakesBonus(this.core.globals.bonusArr[i].type, i);
+                        this.core.ws.publish("playerTakesBonus", {
+                            type: cglbl.bonusArr[i].type,
+                            index: i
+                        });
                     }
                 }
             }

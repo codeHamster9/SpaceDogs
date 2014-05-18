@@ -196,7 +196,9 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SpaceMadness.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Interfaces\ICollideable.cs" />
     <Compile Include="Services\BonusService.cs" />
+    <Compile Include="Services\bounsDataRdy.cs" />
     <Compile Include="Services\RockService.cs" />
     <Compile Include="Models\BonusData.cs" />
     <Compile Include="Models\BonusItem.cs" />

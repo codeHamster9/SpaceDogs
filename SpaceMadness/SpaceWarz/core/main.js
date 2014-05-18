@@ -4,8 +4,6 @@ window.onload = function() {
 
     newEngine.globals.imageObjBackground.onload = function() {
         newEngine.globals.context.drawImage(newEngine.globals.imageObjBackground, 0, 0);
-        newEngine.globals.context.drawImage(newEngine.globals.player2Ship.image, newEngine.globals.player2Ship.x, newEngine.globals.player2Ship.y);
-        newEngine.globals.context.drawImage(newEngine.globals.player1Ship.image, newEngine.globals.player1Ship.x, newEngine.globals.player1Ship.y);
     };
 
     window.requestAnimFrame = (function() {
@@ -36,6 +34,10 @@ window.onload = function() {
         newEngine.globals.canvas.attachEvent('onmousemove', newEngine.update.mouseMove.bind(newEngine));
         window.attachEvent('onkeydown', newEngine.update.whatKey.bind(newEngine));
     }
+
+    window.showMessage = function(message) {
+        document.getElementById("ClientMessages").innerHTML = message;
+    }
 }
 
 
@@ -56,8 +58,4 @@ function getCenterPoint(object) {
         x: Math.round(object.x + object.width / 2),
         y: Math.round(object.y + object.height / 2)
     };
-}
-
-function showMessage(message) {
-    document.getElementById("#ClientMessages").text(message).show();
 }

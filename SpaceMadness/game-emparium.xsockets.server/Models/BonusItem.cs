@@ -1,14 +1,14 @@
-﻿using System;
+﻿using game_emparium.xsockets.server.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
 namespace game_emparium.xsockets.server.Models
 {
-    public class BonusItem
+    public class BonusItem : ICollideable
     {
-        public double x { get; set; }
-        public double y { get; set; }
+
         public double timeout { get; set; }
         public bonusType type { get; set; }
         public double value { get; set; }
@@ -21,5 +21,9 @@ namespace game_emparium.xsockets.server.Models
             Shrink = 2,
             Drunk = 3
         }
+
+        public double x { get; set; }
+
+        public double y { get; set; }
     }
 }
