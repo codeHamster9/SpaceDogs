@@ -1,3 +1,16 @@
 SpaceMadness/SpaceWarz/SpaceWarz.csproj.user
 SpaceMadness/SpaceWarz.v12.suo
 SpaceMadness/SpaceWarz/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+*.dll
+*.suo
+*.dll
+*.pdb
+*.pdb
+*.xml
+*.cache
+*.cache
+*.config
+*.txt
+*.cache
+SpaceMadness/GameLobby/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+SpaceMadness/SpaceWarz.v12.suo
