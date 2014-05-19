@@ -15,7 +15,6 @@ namespace game_emparium.xsockets.server.Services
         static int SpeedMax = 3;
         static int RockSpeedFactor = 2;
         static int SpeedPadding = 1;
-   
 
         public static Rock[] InitRockArray()
         {
@@ -31,9 +30,12 @@ namespace game_emparium.xsockets.server.Services
                     angle = Math.Floor(RandomEngine.NextDouble() * 180) + 1,
                     rotationSpeed = Math.Floor(RandomEngine.NextDouble() * 4) + 1,
                     index = i,
-                    height = RandomEngine.Next(3,7) * 10,
-                    width = RandomEngine.Next(3,7) * 10
+                    height = RandomEngine.Next(3, 7) * 10,
+                    width = RandomEngine.Next(3, 7) * 10,
+                    type = (CollideableType.Type)4
+
                 };
+                rockArray[i].SetCenterPoint();
             }
             return rockArray;
         }
@@ -48,9 +50,12 @@ namespace game_emparium.xsockets.server.Services
                 angle = Math.Floor(RandomEngine.NextDouble() * 180) + 1,
                 rotationSpeed = Math.Floor(RandomEngine.NextDouble() * 4) + 1,
                 index = index,
+                type = (CollideableType.Type)4,
                 height = RandomEngine.Next(4, 8) * 10,
                 width = RandomEngine.Next(4, 8) * 10
             };
+
+            rock.SetCenterPoint();
             return rock;
         }
     }

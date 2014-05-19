@@ -1,10 +1,10 @@
-﻿
+﻿'use strict';
 
 (function (engine) {
 
     var ship = (function () {
 
-        function SpaceShip(id, x, y, width, height) {
+        function Ship(id, x, y, width, height) {
             this.id = id;
             this.x = x;
             this.y = y;
@@ -17,25 +17,25 @@
             this.isHit = false;
             this.isUnderEffect = false;
             this.shieldsUp = false;
-            this.fx = new effects.effectBase(); //effect Object
+            this.fx = new fx.base(); //effect Object
             this.image = new Image();
             this.Transform = {};
         }
 
-        SpaceShip.prototype.applyEffect = function () {
+        Ship.prototype.applyEffect = function () {
             if (this.fx.duration >= 0) {
                 this.fx.apply(this);
             }
         };
 
-        SpaceShip.prototype.explode = function (rockIndex) {
+        Ship.prototype.explode = function (rockIndex) {
             this.isHit = true;
             this.frameIndex = 0;
             this.takeHit();
             //hub.server.playerExplode(rockIndex);
         };
 
-        SpaceShip.prototype.takeHit = function (Hit_Value, Damage_MAX) {
+        Ship.prototype.takeHit = function (Hit_Value, Damage_MAX) {
             this.isHit = true;
             this.frameIndex = 0;
             if (this.damageBar + Hit_Value < Damage_MAX) {
@@ -45,7 +45,7 @@
                 this.damageBar = 0;
             }
         };
-        return SpaceShip;
+        return Ship;
     }());
-    engine.ship = ship;
+    engine.models.ship = ship;
 }(engine));

@@ -19,37 +19,32 @@ namespace game_emparium.xsockets.server.Services
 
         }
 
-        public static BonusData InitBonusData()
+        public static BonusItem[] InitBonusData()
         {
             //TODO: broadcast to specific Group
-            BonusData data = new BonusData(RandomEngine.Next(1, 4));
+            BonusItem[] data = new BonusItem[3];
 
-            for (int i = 0; i < data.bonusim.Length; i++)
+#if DEBUG
+            Debug.Write(DateTime.Now.ToString("hh:mm:ss:fff") + " ");
+#endif
+            for (int i = 0; i < RandomEngine.Next(1, 4); i++)
             {
-                data.bonusim[i] = new BonusItem()
+                data[i] = new BonusItem()
                 {
                     x = Math.Round(RandomEngine.NextDouble() * 700) + 100,
                     y = Math.Round(RandomEngine.NextDouble() * 400) + 50,
                     timeout = Math.Round(RandomEngine.NextDouble() * 300) + 150,
-                    type = (BonusItem.bonusType)RandomEngine.Next(0, 4),
+                    type = (CollideableType.Type)RandomEngine.Next(0, 4),
                     value = 1000,
-                    effectDuration = (7 * 60)
+                    duration = (7 * 60)
 
                 };
-
-                
+#if DEBUG
+                Debug.Write(String.Format("[{1}]: type : {0}\t", data[i].type,i));
+#endif
             }
-            //data.bonusFactor = String.Format("ServerTime : {1} , Interval : {0} , ", bonusTimer.Interval / 1000, DateTime.Now.ToLongTimeString());
-            //GlobalHost.ConnectionManager.GetHubContext<SpaceHub>().Clients.All.setBonusData(data);
-         
-            foreach (var bonus in data.bonusim)
-            {
-                Debug.Write("type :" + " " + bonus.type + " " + "duration : " + " " + bonus.effectDuration + " ");
-            }
-            Debug.WriteLine(DateTime.Now);
+            Debug.Write("\n");
             return data;
         }
-
-
     }
 }

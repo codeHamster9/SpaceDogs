@@ -8,7 +8,7 @@ using System.Web.Security;
 using System.Web.SessionState;
 using System.Timers;
 
-namespace SpaceWarz
+namespace game.spacemadness
 {
     public class Global : System.Web.HttpApplication
     {

@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceMadness", "SpaceWarz\SpaceMadness.csproj", "{8844B34C-FAE3-4D48-B76E-7A5D40D243F8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "game-emparium.game.spacemadness", "SpaceWarz\game-emparium.game.spacemadness.csproj", "{8844B34C-FAE3-4D48-B76E-7A5D40D243F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameLobby", "GameLobby\GameLobby.csproj", "{EE229026-4929-4EA0-A747-07AF1C3DB2FF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "game-emparium.lobby", "GameLobby\game-emparium.lobby.csproj", "{EE229026-4929-4EA0-A747-07AF1C3DB2FF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{1E4F2E2B-28E6-48DB-A445-92459F11A376}"
 	ProjectSection(SolutionItems) = preProject

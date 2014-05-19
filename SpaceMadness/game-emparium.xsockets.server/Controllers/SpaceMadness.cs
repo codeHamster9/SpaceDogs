@@ -3,6 +3,7 @@ using game_emparium.xsockets.server.Services;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Timers;
 using XSockets.Core.Common.Socket.Event.Arguments;
@@ -34,7 +35,7 @@ namespace game_emparium.xsockets.server.Controllers
             RandomEngine = new Random();
             bonusTimer = new System.Timers.Timer();
             this.OnOpen += SpaceMadness_OnOpen;
-            bonusTimer.Interval = Math.Floor(RandomEngine.NextDouble() * 30000) + 3000;
+            bonusTimer.Interval = Math.Floor(RandomEngine.NextDouble() * 120000) + 3000;
             bonusTimer.Elapsed += new ElapsedEventHandler(TimeElapsed);
             bonusTimer.Enabled = true;
 
@@ -109,10 +110,13 @@ namespace game_emparium.xsockets.server.Controllers
         {
             Rock rock = RockService.getSingleRock(index);
             this.SendToAll(rock, "addNewRock");
+#if DEBUG
+            Debug.Write(DateTime.Now.ToString("hh:mm:ss:fff") + " " + "rock Generated" + " " + "index : " + index + "\n");  
+#endif
         }
         public void MoveShip(int x, int y, int id)
         {
-            this.SendToAll(new Point(x, y), "shipMoved");
+            this.SendToAllExceptMe(new Point(x, y), "shipMoved");
         }
         public void PlayerBump()
         {
@@ -128,14 +132,14 @@ namespace game_emparium.xsockets.server.Controllers
             dynamic data = new ExpandoObject();
             data.type = type;
             data.bonusIndex = index;
-            this.SendToAll((Object)data, "wingManExplode");
+            this.SendToAllExceptMe((Object)data, "wingmanTakesBonus");
         }
 
         void TimeElapsed(object sender, ElapsedEventArgs e)
         {
             var data = BonusService.InitBonusData();
-            this.SendToAll(data.bonusim, "setBonusData");
-            bonusTimer.Interval = Math.Floor(RandomEngine.NextDouble() * 300000) + 3000;
+            this.SendToAll(data, "setBonusData");
+            bonusTimer.Interval = Math.Floor(RandomEngine.NextDouble() * 120000) + 3000;
         }
 
     }
@@ -148,7 +152,7 @@ namespace game_emparium.xsockets.server.Controllers
             this.X = _x;
             this.Y = _y;
         }
-        public int X { get; set; }
-        public int Y { get; set; }
+        public double X { get; set; }
+        public double Y { get; set; }
     }
 }

@@ -10,24 +10,27 @@
     }
 }
 
-var effects;
-(function(effects) {
-    var effectBase = (function() {
+var fx;
+(function(fx) {
+    var fxbase = (function() {
 
-        function EffectBase(duration, type) {
+        function FxBase(duration, type) {
             this.duration = duration;
             this.type = type;
         }
-        return EffectBase;
+
+        FxBase.prototype.apply = function() {};
+        
+        FxBase.prototype.clearFX = function() {
+            this.isUnderEffect = false;
+            this.fx = null;
+            document.getElementById('myCanvas').textContent = "";
+        };
+
+        return FxBase;
+
     }());
 
-    effectBase.prototype.apply = function() {};
-    effectBase.prototype.clearFX = function() {
-        this.isUnderEffect = false;
-        this.fx = null;
-        document.getElementById('myCanvas').textContent = "";
-    };
+    fx.base = fxbase;
 
-    effects.effectBase = effectBase;
-
-}(effects || (effects = {})));
+}(fx || (fx = {})));
