@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <script src="Scripts/XSockets.latest.js"></script>
+    <script src="engine/core/engine.core.js"></script>
+    <script src="engine/core/engine.draw.js"></script>
+    <script src="engine/core/engine.update.js"></script>
+    <script src="engine/models/models.item.js"></script>
+    <script src="engine/models/models.ship.js"></script>
+    <script src="engine/models/models.rock.js"></script>
+    <script src="engine/fx/fx.base.js"></script>
+    <script src="engine/fx/fx.bump.js"></script>
+    <script src="engine/fx/fx.drunk.js"></script>
+    <script src="engine/fx/fx.shield.js"></script>
+    <script src="engine/fx/fx.shrink.js"></script>
+    <script src="engine/common/utils.js"></script>
+    <script src="engine/app.js"></script>
+</head>
+
+<body>
+    <canvas id="myCanvas" width="900" height="500"></canvas>
+    <br />
+    <br />
+    <input type="button" disabled="disabled" value="Start Game" onclick="readyToPlay()" />
+    <input type="button" value="Leave Game" disabled="disabled" onclick="leaveGame()" />
+    <br />
+    <br />
+    <div style="background-color: lightgray">
+        <label id="ClientMessages" style="font-family: 'Courier New', Courier, 'Nimbus Mono L', monospace; font-size: xx-large; font-weight: 400" class="" contenteditable="true">Click 'Esc' to exit the room !!!</label>
+    </div>
+
+</body>
+
+</html>
