@@ -1,8 +1,15 @@
 *.user
+*.dll
 *.suo
 *.dll
+*.pdb
 *.pdb
 *.xml
 *.cache
 *.config
 *.txt
+*.vssscc
+*.dgml
+*.sln
+.nuget
+packages
