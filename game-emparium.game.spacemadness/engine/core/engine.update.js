@@ -1,63 +1,63 @@
 var engine, effects, common;
 (function(engine) {
     var cglbl,
-        update = (function(core) {
+        update = (function(globals) {
 
-            function update(core) {
-                this.core = core;
-                cglbl = core.globals;
+            function Update(globals, x, y) {
+                _socket = null;
+                _backGroundX = x;
+                _backGroundY = y;
+                _player1 = null;
+                _player2 = null;
+                cglbl = globals;
             }
-            return update;
+            return Update;
         }());
 
-    update.prototype.updateBonus = function(data) {
-        if (cglbl.IsGameStarted) {
-            cglbl.bonusArr = data;
-            var i;
-            for (i = 0; i < data.length; i++) {
-                cglbl.bonusArr[i].width = cglbl.imageBonus.width;
-                cglbl.bonusArr[i].height = cglbl.imageBonus.height;
-            }
+    update.prototype.init = function() {
+        if (window.addEventListener) {
+            window.addEventListener('mousemove', this.mouseMove.bind(this), false);
+            window.addEventListener('keydown', this.whatKey.bind(this), false);
+        } else if (window.attachEvent) {
+            window.attachEvent('onmousemove', this.mouseMove.bind(this));
+            window.attachEvent('onkeydown', this.whatKey.bind(this));
         }
     };
 
-    update.prototype.updateScore = function(playerIndex, updateType) {
-        switch (updateType) {
-            case "bonus":
-                switch (playerIndex) {
-                    case 1:
-                        cglbl.scorePlayer1 += 1000;
-                        break;
-                    case 2:
-                        cglbl.scorePlayer2 += 1000;
-                        break;
-                }
-                break;
+    update.prototype.setPlayers = function(player1, player2) {
+        _player1 = player1;
+        _player2 = player2;
+    };
 
-            case "hit":
-                switch (playerIndex) {
-                    case 1:
-                        if (cglbl.scorePlayer1 > 500) {
-                            cglbl.scorePlayer1 -= 500;
-                        } else {
-                            cglbl.scorePlayer1 = 0;
-                        }
-                        break;
-                    case 2:
-                        if (cglbl.scorePlayer2 > 500) {
-                            cglbl.scorePlayer2 -= 500;
-                        } else {
-                            cglbl.scorePlayer2 = 0;
-                        }
-                        break;
-                }
+    update.prototype.updateBonus = function(data) {
+        cglbl.bonusArr = data;
+    };
+
+    update.prototype.updateScores = function(value, player) {
+
+        switch (player) {
+            case "leader":
+                if (cglbl.scorePlayer1 += value > 0)
+                    cglbl.scorePlayer1 += value;
+                else
+                    cglbl.scorePlayer1 = 0;
+                break;
+            case "wingman":
+
+                if (cglbl.scorePlayer2 += value > 0)
+                    cglbl.scorePlayer2 += value;
+                else
+                    cglbl.scorePlayer2 = 0;
+                break;
+            default:
+                cglbl.scorePlayer1 += value;
+                cglbl.scorePlayer2 += value;
                 break;
         }
     };
 
     update.prototype.updateBonusEffect = function(ship) {
         if (ship.fx) {
-            // ship.applyEffect();
             ship.fx.apply(ship);
         } else {
             cglbl.onScreenText = "";
@@ -69,8 +69,7 @@ var engine, effects, common;
             center, rockCenter, collidables = [],
             buffer = 13;
 
-        if (!cglbl.player1Ship.isHit && !cglbl.player1Ship.shieldsUp && cglbl.IsGameStarted) {
-            shipCenter = cglbl.player1Ship.getShipCenter();
+        if (!_player1.isHit) {
             if (cglbl.rocksArr && cglbl.rocksArr.length > 0)
                 collidables = cglbl.rocksArr;
 
@@ -79,20 +78,10 @@ var engine, effects, common;
 
             // collidables = collidables.concat(cglbl.player2Ship);
 
-            /*            if (!cglbl.isHelmsLocked) {
-                deltax = shipCenter.x - cglbl.player2Ship.x;
-                deltay = shipCenter.y - cglbl.player2Ship.y;
-                dist = Math.sqrt(deltax * deltax + deltay * deltay);
-                if (dist < 30) {
-                    isHelmsLocked = true;
-                    console.log("player collide");
-                }
-            }*/
-
             if (!collidables)
                 return;
 
-
+            shipCenter = _player1.getShipCenter();
 
             for (i = 0; i < collidables.length; ++i) {
 
@@ -108,54 +97,57 @@ var engine, effects, common;
                     switch (collidables[i].type) {
                         /* case "Ship":
                             if (!cglbl.isHelmsLocked) {
-                                if (cglbl.player1Ship.x > cglbl.player2Ship.x) {
+                                if (_player1.x > cglbl.player2Ship.x) {
                                     me = true;
                                     wingman = false;
                                 } else {
                                     me = false;
                                     wingman = true;
                                 }
-                                cglbl.player1Ship.isUnderEffect = true;
+                                _player1.isUnderEffect = true;
                                 cglbl.player2Ship.isUnderEffect = true;
-                                cglbl.player1Ship.fx = new fx.bump(me);
+                                _player1.fx = new fx.bump(me);
                                 cglbl.player2Ship.fx = new fx.bump(wingman);
                                 cglbl.isHelmsLocked = true;
                                 console.log("player collide");
                             }*/
                         case "Rock":
-                            this.updateScore(1, "hit");
-                            cglbl.player1Ship.takeHit(100);
-                            this.core.ws.publish('playerExplode', i);
+                            if (!_player1.shieldsUp) {
+                                this.updateScores(-500, "leader");
+                                _player1.takeHit(35);
+                                this.socket.publish("playerExplode", {
+                                        index: i
+                                    });
+                            }
                             break;
                         case "Points":
-                            this.updateScore(1, "bonus");
+                            this.updateScores(1000, "leader");
                             console.log("Points");
                             break;
                         case "Shield":
                         case "Shrink":
                         case "Drunk":
-                            if (cglbl.player1Ship.fx) {
-                                cglbl.player1Ship.fx.clearFX(cglbl.player1Ship);
+                            if (_player1.fx) {
+                                _player1.fx.clearFX(_player1);
                             }
                             collidables[i].timeout = 0;
-                            // cglbl.player1Ship.isUnderEffect = true;
                     }
 
                     switch (collidables[i].type) {
                         case "Shield":
-                            cglbl.player1Ship.fx = new fx.shield();
+                            _player1.fx = new fx.shield();
                             cglbl.onScreenText = "Shields Up!";
                             break;
                         case "Shrink":
-                            cglbl.player1Ship.fx = new fx.shrink(32);
+                            _player1.fx = new fx.shrink(32);
                             cglbl.onScreenText = "Shrink Ray!";
                             break;
                         case "Drunk":
-                            cglbl.player1Ship.fx = new fx.drunk(30, cglbl.backGroundX);
+                            _player1.fx = new fx.drunk(30, cglbl.backGroundX);
                             cglbl.onScreenText = "Drunk Driving!";
                             break;
                     }
-                    this.core.ws.publish("playerTakesBonus", {
+                    this.socket.publish("playerTakesBonus", {
                         type: collidables[i].type,
                         index: i
                     });
@@ -165,44 +157,44 @@ var engine, effects, common;
     };
 
     update.prototype.whatKey = function(evt) {
-        if (!this.globals.player1Ship.isHit && !this.globals.isHelmsLocked) {
+        if (!_player1.isHit && !_player1.helmslock) {
             // Flag to put variables back if we hit an edge of the board.
             var flag = 0;
 
             // Get where the ship was before key process.
-            this.globals.player1Ship.oldX = this.globals.player1Ship.x;
-            this.globals.player1Ship.oldY = this.globals.player1Ship.y;
+            _player1.oldX = _player1.x;
+            _player1.oldY = _player1.y;
 
             switch (evt.keyCode) {
                 case 37: // Left arrow.
-                    this.globals.player1Ship.x = this.globals.player1Ship.x - 30;
-                    if (this.globals.player1Ship.x < 30) {
+                    _player1.x = _player1.x - 30;
+                    if (_player1.x < 30) {
                         // If at edge, reset ship position and set flag.
-                        this.globals.player1Ship.x = 30;
+                        _player1.x = 30;
                         flag = 1;
                     }
                     break;
                 case 39: // Right arrow.
-                    this.globals.player1Ship.x = this.globals.player1Ship.x + 30;
-                    if (this.globals.player1Ship.x > this.globals.backGroundX - 30) {
+                    _player1.x = _player1.x + 30;
+                    if (_player1.x > _backGroundX - 30) {
                         // If at edge, reset ship position and set flag.
-                        this.globals.player1Ship.x = this.globals.backGroundX - 30;
+                        _player1.x = _backGroundX - 30;
                         flag = 1;
                     }
                     break;
                 case 40: // Down arrow
-                    this.globals.player1Ship.y = this.globals.player1Ship.y + 30;
-                    if (this.globals.player1Ship.y > this.globals.backGroundY) {
+                    _player1.y = _player1.y + 30;
+                    if (_player1.y > _backGroundY) {
                         // If at edge, reset ship position and set flag.
-                        this.globals.player1Ship.y = this.globals.backGroundY;
+                        _player1.y = _backGroundY;
                         flag = 1;
                     }
                     break;
                 case 38: // Up arrow 
-                    this.globals.player1Ship.y = this.globals.player1Ship.y - 30;
-                    if (this.globals.player1Ship.y < 0) {
+                    _player1.y = _player1.y - 30;
+                    if (_player1.y < 0) {
                         // If at edge, reset ship position and set flag.
-                        this.globals.player1Ship.y = 0;
+                        _player1.y = 0;
                         flag = 1;
                     }
                     break;
@@ -224,32 +216,28 @@ var engine, effects, common;
 
             // If flag is set, the ship did not move.
             // Put everything back the way it was.
-            if (flag && !this.globals.isHelmsLocked) {
-                this.globals.player1Ship.x = this.globals.player1Ship.oldX;
-                this.globals.player1Ship.y = this.globals.player1Ship.oldY;
+            if (flag && !_player1.helmslock) {
+                _player1.x = _player1.oldX;
+                _player1.y = _player1.oldY;
             } else {
-                this.ws.publish("moveShip", cglbl.player1Ship.getPosition());
+                this.socket.publish("moveShip", _player1.getPosition());
             }
         }
     };
 
     update.prototype.mouseMove = function(evt) {
-        if ((evt.clientX < this.globals.backGroundX && evt.clientY < this.globals.backGroundY) &&
+        if ((evt.clientX < _backGroundX && evt.clientY < _backGroundY) &&
             (evt.clientX > 0 && evt.clientY > 0)) {
 
             evt.preventDefault();
 
-            if (!cglbl.player1Ship.isHit && cglbl.IsGameStarted && !cglbl.isHelmsLocked) {
+            if (!_player1.isHit && !_player1.helmslock) {
 
-                cglbl.player1Ship.moveHorizontl(evt.clientX);
-                cglbl.player1Ship.moveVertical(evt.clientY);
-                this.ws.publish("moveShip", cglbl.player1Ship.getPosition());
+                _player1.moveHorizontl(evt.clientX);
+                _player1.moveVertical(evt.clientY);
+                this.socket.publish("moveShip", _player1.getPosition());
             }
         }
-        // window.style.cursor = 'none';
-        // } else {
-        //     window.style.cursor = 'auto';
-        // }
     };
 
     engine.update = update;

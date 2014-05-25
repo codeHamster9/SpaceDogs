@@ -20,8 +20,7 @@
                 } else {
                     ship.x = (ship.x - 3.5);
                 }
-
-                //isHelmsLocked = true;
+                ship.helmslock = true;
                 // change to event broadcast 
             }
             if (this.duration == 0) {
@@ -33,8 +32,7 @@
         FxBump.prototype.clearFX = function(ship) {
             ship.isUnderEffect = false;
             ship.fx = null;
-            //isHelmsLocked = false;
-            //onScreenText = "";
+            ship.helmslock = false;
         };
 
         return FxBump;

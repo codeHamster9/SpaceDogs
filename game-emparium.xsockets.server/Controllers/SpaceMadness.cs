@@ -21,7 +21,7 @@ namespace game_emparium.xsockets.server.Controllers
         public string GameId { get; set; }
         void ItemGen_OnDataReady(object sender, OnDataReadyArgs e)
         {
-            this.SendToAll(e.Data, "setItemData");
+            this.SendToAll(e.Data, "setItemsData");
         }
         void SpaceMadness_OnClose(object sender, OnClientDisconnectArgs e)
         {

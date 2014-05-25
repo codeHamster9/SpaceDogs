@@ -12,6 +12,7 @@
                 _y = y,
                 _url = url;
 
+
             this.getPosition = function() {
                 return {
                     x: _x,
@@ -39,7 +40,7 @@
             this.width = width;
             this.height = height;
             this.type = "Ship";
-
+            this.helmslock = true;
             this.health = 489;
             this.frameIndex = 0;
             this.isHit = false;
@@ -71,8 +72,8 @@
         Ship.prototype.takeHit = function(hit) {
             this.isHit = true;
             this.frameIndex = 0;
-            if (this.health - 49 > 0) {
-                this.health -= 49;
+            if (this.health - hit > 0) {
+                this.health -= hit;
             } else {
                 this.health = 489;
             }

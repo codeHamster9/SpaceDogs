@@ -3,126 +3,159 @@ var engine, common;
     //'use strict';
     var cglbl,
         DEBUG = false,
-        draw = (function() {
+        draw = (function(globals) {
 
-            function Draw(core) {
-                this.core = core;
-                cglbl = core.globals;
+            function Draw(velocity,globals) {
+                imageRock = new Image();
+                imageBonus = new Image();
+                imageObjBackground = new Image();
+                canvas = null;
+                context = null;
+                _player1 = null;
+                _player2 = null;
+            
+                _backGroundSpeed = 2;
+                _velocity = velocity;
+                _socket = null;
+                _toRadians = Math.PI / 180;
+                cglbl = globals;
             }
-
             return Draw;
         }());
 
+    draw.prototype.getCanvas = function() {
+        return canvas;
+    };
+
+     draw.prototype.setSocket = function(socket) {
+        _socket = socket;
+    };
+
+    draw.prototype.init = function() {
+
+        imageRock.src = "Images/asteroid.png";
+        imageBonus.src = "Images/bonus1.png";
+        imageObjBackground.src = "Images/space_background.jpg";
+        canvas = document.getElementById('myCanvas');
+        context = canvas.getContext('2d');
+    };
+
+    draw.prototype.setPlayers = function(player1, player2) {
+
+        _player1 = player1;
+        _player2 = player2;
+    };
+
     draw.prototype.drawBackround = function() {
 
-        cglbl.context.clearRect(0, 0, cglbl.canvas.width, cglbl.canvas.height);
+        context.clearRect(0, 0, canvas.width, canvas.height);
 
-        if (cglbl.backgroundVelocity >= cglbl.imageObjBackground.height) {
-            cglbl.backgroundVelocity = 0;
+        if (_velocity >= imageObjBackground.height) {
+            _velocity = 0;
         }
 
         //increase Speed
         if (cglbl.frameCounter % 1200 === 0 && cglbl.backGroundProgress < 10) {
-            cglbl.backGroundProgress += 2;
+            _backGroundSpeed += 2;
         }
 
-        cglbl.backgroundVelocity += cglbl.backGroundSpeed;
+        _velocity += _backGroundSpeed;
 
-        cglbl.context.drawImage(cglbl.imageObjBackground, 0, (-1 * (cglbl.imageObjBackground.height - cglbl.backgroundVelocity)));
-        this.core.globals.context.drawImage(this.core.globals.imageObjBackground, 0, this.core.globals.backgroundVelocity);
+        context.drawImage(imageObjBackground, 0, (-1 * (imageObjBackground.height - _velocity)));
+        context.drawImage(imageObjBackground, 0, _velocity);
     };
 
     draw.prototype.drawLifeBar = function() {
 
-        var leader = 489 - cglbl.player1Ship.health + 100;
-        var wingman = 489 - cglbl.player2Ship.health + 100;
+        var leader = 489 - _player1.health + 100;
+        var wingman = 489 - _player2.health + 100;
 
         //draw bar Frame
-        cglbl.context.beginPath();
-        cglbl.context.moveTo(10, 100);
-        cglbl.context.lineTo(10, 490);
-        cglbl.context.lineTo(30, 490);
-        cglbl.context.lineTo(30, 100);
-        cglbl.context.lineTo(10, 100);
-        cglbl.context.moveTo(870, 100);
-        cglbl.context.lineTo(870, 490);
-        cglbl.context.lineTo(890, 490);
-        cglbl.context.lineTo(890, 100);
-        cglbl.context.lineTo(870, 100);
+        context.beginPath();
+        context.moveTo(10, 100);
+        context.lineTo(10, 490);
+        context.lineTo(30, 490);
+        context.lineTo(30, 100);
+        context.lineTo(10, 100);
+        context.moveTo(870, 100);
+        context.lineTo(870, 490);
+        context.lineTo(890, 490);
+        context.lineTo(890, 100);
+        context.lineTo(870, 100);
 
-        cglbl.context.closePath();
-        cglbl.context.lineWidth = 5;
-        cglbl.context.strokeStyle = 'blue';
-        cglbl.context.stroke();
+        context.closePath();
+        context.lineWidth = 5;
+        context.strokeStyle = 'blue';
+        context.stroke();
 
         //draw life bar
-        cglbl.context.beginPath();
-        cglbl.context.moveTo(11, 489); //start
-        cglbl.context.lineTo(29, 489); //left
-        cglbl.context.lineTo(29, leader); //footer
-        cglbl.context.lineTo(11, leader); //right
-        cglbl.context.lineTo(11, 489); //head
-        cglbl.context.fillStyle = "rgba(255,0,0,0.5)";
-        cglbl.context.fill();
-        cglbl.context.closePath();
-        cglbl.context.moveTo(871, 489); //start
-        cglbl.context.lineTo(889, 489); //left
-        cglbl.context.lineTo(889, wingman); //footer
-        cglbl.context.lineTo(871, wingman); //right
-        cglbl.context.lineTo(871, 489); //head
-        cglbl.context.fillStyle = "rgba(255,0,0,0.5)";
-        cglbl.context.fill();
-        cglbl.context.closePath();
+        context.beginPath();
+        context.moveTo(11, 489); //start
+        context.lineTo(29, 489); //left
+        context.lineTo(29, leader); //footer
+        context.lineTo(11, leader); //right
+        context.lineTo(11, 489); //head
+        context.fillStyle = "rgba(255,0,0,0.5)";
+        context.fill();
+        context.closePath();
+        context.moveTo(871, 489); //start
+        context.lineTo(889, 489); //left
+        context.lineTo(889, wingman); //footer
+        context.lineTo(871, wingman); //right
+        context.lineTo(871, 489); //head
+        context.fillStyle = "rgba(255,0,0,0.5)";
+        context.fill();
+        context.closePath();
     };
 
     draw.prototype.drawPlayers = function() {
 
-        var leader = cglbl.player1Ship;
-        var wingman = cglbl.player2Ship;
+        var leader = _player1;
+        var wingman = _player2;
         var shipPosition;
 
         if (leader.isHit)
             this.drawExplosion(leader);
         else {
             shipPosition = leader.getPosition();
-            cglbl.context.drawImage(leader.image, shipPosition.x, shipPosition.y, leader.width, leader.height);
+            context.drawImage(leader.image, shipPosition.x, shipPosition.y, leader.width, leader.height);
         }
 
         if (wingman.isHit)
             this.drawExplosion(wingman);
         else {
             shipPosition = wingman.getPosition();
-            cglbl.context.drawImage(wingman.image, shipPosition.x, shipPosition.y, wingman.width, wingman.height);
+            context.drawImage(wingman.image, shipPosition.x, shipPosition.y, wingman.width, wingman.height);
         }
     };
 
-    draw.prototype.drawScores = function() {
-        cglbl.context.fillStyle = "rgba(255,0,0,0.5)";
-        cglbl.context.font = 'italic bold 30px sans-serif';
-        cglbl.context.textBaseline = 'bottom';
-        cglbl.context.fillText(cglbl.scorePlayer1, 60, 35);
-        cglbl.context.fillText(cglbl.scorePlayer2, 780, 35);
+    draw.prototype.drawScores = function(player1,player2) {
+        context.fillStyle = "rgba(255,0,0,0.5)";
+        context.font = 'italic bold 30px sans-serif';
+        context.textBaseline = 'bottom';
+        context.fillText(player1, 60, 35);
+        context.fillText(player2, 780, 35);
     };
 
     draw.prototype.drawTimer = function(value) {
         // draw background and both players
-        cglbl.context.clearRect(0, 0, cglbl.canvas.width, cglbl.canvas.height);
-        cglbl.context.drawImage(cglbl.imageObjBackground, 0, 0);
-        this.drawLifeBar(cglbl.player2Ship.health, 2);
-        this.drawLifeBar(cglbl.player1Ship.health, 1);
-        this.drawPlayer(cglbl.player1Ship);
-        this.drawPlayer(cglbl.player2Ship);
-        cglbl.context.fillStyle = "rgba(255,0,0,0.5)";
-        cglbl.context.font = 'italic bold 70px sans-serif';
-        cglbl.context.textBaseline = 'bottom';
-        cglbl.context.fillText(value, 430, 280);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(imageObjBackground, 0, 0);
+        this.drawLifeBar(_player2.health, 2);
+        this.drawLifeBar(_player1.health, 1);
+        this.drawPlayer(_player1);
+        this.drawPlayer(_player2);
+        context.fillStyle = "rgba(255,0,0,0.5)";
+        context.font = 'italic bold 70px sans-serif';
+        context.textBaseline = 'bottom';
+        context.fillText(value, 430, 280);
     };
 
     draw.prototype.drawBonus = function() {
         var i;
         for (i = cglbl.bonusArr.length - 1; i >= 0; i--) {
             if (cglbl.bonusArr[i].timeout > 0) {
-                cglbl.context.drawImage(cglbl.imageBonus, cglbl.bonusArr[i].x, cglbl.bonusArr[i].y);
+                context.drawImage(imageBonus, cglbl.bonusArr[i].x, cglbl.bonusArr[i].y);
                 cglbl.bonusArr[i].timeout--;
             }
         }
@@ -131,52 +164,52 @@ var engine, common;
     draw.prototype.drawRocks = function() {
         var i = 0;
         for (i; i < cglbl.rocksArr.length; ++i) {
-            this.drawRotatedImage(cglbl.imageRock, cglbl.rocksArr[i]);
+            this.drawRotatedImage(imageRock, cglbl.rocksArr[i]);
             cglbl.rocksArr[i].angle += cglbl.rocksArr[i].rotationSpeed;
 
             if (DEBUG) {
                 //draw hit area
-                cglbl.context.beginPath();
-                cglbl.context.arc(cglbl.rocksArr[i].x, cglbl.rocksArr[i].y, (cglbl.rocksArr[i].width / 2) - 3, 0, 2 *
+                context.beginPath();
+                context.arc(cglbl.rocksArr[i].x, cglbl.rocksArr[i].y, (cglbl.rocksArr[i].width / 2) - 3, 0, 2 *
                     Math.PI, false);
-                cglbl.context.fillStyle = "rgba(255,255,0,0.2)";
-                cglbl.context.closePath();
-                cglbl.context.fill();
+                context.fillStyle = "rgba(255,255,0,0.2)";
+                context.closePath();
+                context.fill();
 
                 //draw center
-                cglbl.context.beginPath();
-                cglbl.context.fillStyle = "rgba(255,0,0,1.5)";
-                // cglbl.context.arc(cglbl.rocksArr[i].x, cglbl.rocksArr[i].y, 3, 0, 2 * Math.PI, false);
-                cglbl.context.fillRect(cglbl.rocksArr[i].x, cglbl.rocksArr[i].y, 5, 5);
-                cglbl.context.closePath();
-                cglbl.context.fill();
+                context.beginPath();
+                context.fillStyle = "rgba(255,0,0,1.5)";
+                // context.arc(cglbl.rocksArr[i].x, cglbl.rocksArr[i].y, 3, 0, 2 * Math.PI, false);
+                context.fillRect(cglbl.rocksArr[i].x, cglbl.rocksArr[i].y, 5, 5);
+                context.closePath();
+                context.fill();
 
                 //draw distance
-                // if (cglbl.player1Ship.life > 0) {
-                cglbl.context.beginPath();
-                cglbl.context.fillStyle = "rgba(255,255,255,1.5)";
-                cglbl.context.font = 'italic bold ' + 15 + 'px sans-serif';
-                cglbl.context.textBaseline = 'center';
-                cglbl.context.fillText(cglbl.rocksArr[i].distance, cglbl.rocksArr[i].x - 40, cglbl.rocksArr[i].y +
+                // if (_player1.life > 0) {
+                context.beginPath();
+                context.fillStyle = "rgba(255,255,255,1.5)";
+                context.font = 'italic bold ' + 15 + 'px sans-serif';
+                context.textBaseline = 'center';
+                context.fillText(cglbl.rocksArr[i].distance, cglbl.rocksArr[i].x - 40, cglbl.rocksArr[i].y +
                     10);
-                cglbl.context.closePath();
-                cglbl.context.fill();
+                context.closePath();
+                context.fill();
                 // }
 
                 //draw X,Y
-                cglbl.context.beginPath();
-                cglbl.context.fillStyle = "rgba(255,125,0,1.5)";
-                cglbl.context.font = 'italic bold 15px sans-serif';
-                cglbl.context.textBaseline = 'center';
-                cglbl.context.fillText(cglbl.rocksArr[i].x + "," + cglbl.rocksArr[i].y, cglbl.rocksArr[i].x + 20,
+                context.beginPath();
+                context.fillStyle = "rgba(255,125,0,1.5)";
+                context.font = 'italic bold 15px sans-serif';
+                context.textBaseline = 'center';
+                context.fillText(cglbl.rocksArr[i].x + "," + cglbl.rocksArr[i].y, cglbl.rocksArr[i].x + 20,
                     cglbl.rocksArr[i].y - 10);
-                cglbl.context.closePath();
-                cglbl.context.fill();
+                context.closePath();
+                context.fill();
             }
 
 
             if (cglbl.rocksArr[i].y > 550) {
-                this.core.ws.publish("getNewRock", {
+                _socket.publish("getNewRock", {
                     index: i
                 });
             } else {
@@ -191,7 +224,7 @@ var engine, common;
             shipPos = ship.getPosition();
         if (ship.frameIndex < cglbl.explosionArray.length) {
             imageObj.src = cglbl.explosionArray[ship.frameIndex];
-            cglbl.context.drawImage(imageObj, shipPos.x - 30, shipPos.y - 30);
+            context.drawImage(imageObj, shipPos.x - 30, shipPos.y - 30);
             ship.frameIndex++;
         } else {
             ship.isHit = false;
@@ -200,7 +233,7 @@ var engine, common;
 
     draw.prototype.drawShipTransform = function(ship) {
         if (ship.frameIndex < cglbl.shipTransform.length) {
-            cglbl.context.drawImage(cglbl.shipTransform[ship.frameIndex].image, ship.x, ship.y, 120, 120);
+            context.drawImage(cglbl.shipTransform[ship.frameIndex].image, ship.x, ship.y, 120, 120);
             ship.frameIndex++;
         } else {
             ship.Transform = false;
@@ -208,31 +241,31 @@ var engine, common;
     };
 
     draw.prototype.drawText = function() {
-        cglbl.context.fillStyle = "rgba(255,0,0,0.5)";
-        cglbl.context.font = 'italic bold 35px sans-serif';
-        cglbl.context.textBaseline = 'bottom';
-        cglbl.context.fillText(cglbl.onScreenText, cglbl.canvas.clientWidth / 2, 50);
+        context.fillStyle = "rgba(255,0,0,0.5)";
+        context.font = 'italic bold 35px sans-serif';
+        context.textBaseline = 'bottom';
+        context.fillText(cglbl.onScreenText, canvas.clientWidth / 2, 50);
     };
 
     draw.prototype.drawRotatedImage = function(image, obj) {
 
         // save the current co-ordinate system 
         // before we screw with it
-        cglbl.context.save();
+        context.save();
 
         // move to the middle of where we want to draw our image
-        cglbl.context.translate(obj.x, obj.y);
+        context.translate(obj.x, obj.y);
 
         // rotate around that point, converting our 
         // angle from degrees to radians 
-        cglbl.context.rotate(obj.angle * cglbl.TO_RADIANS);
+        context.rotate(obj.angle * _toRadians);
 
         // draw it up and to the left by half the width
         // and height of the image 
-        cglbl.context.drawImage(image, -(image.width / 2), -(image.height / 2), obj.width, obj.height);
+        context.drawImage(image, -(image.width / 2), -(image.height / 2), obj.width, obj.height);
 
         // and restore the co-ords to how they were when we began
-        cglbl.context.restore();
+        context.restore();
     };
 
     engine.draw = draw;

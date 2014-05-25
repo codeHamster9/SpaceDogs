@@ -45,8 +45,9 @@ namespace game_emparium.xsockets.server.Services
                     timeout = Math.Round(RandomEngine.NextDouble() * 300) + 150,
                     type = (CollideableType.Type)RandomEngine.Next(0, 4),
                     value = 1000,
-                    duration = (7 * 60)
-
+                    duration = (7 * 60),
+                    width = 30,
+                    height = 30              
                 };
 #if DEBUG
                 Debug.Write(String.Format("[{1}]: type : {0}\t", data[i].type, i));

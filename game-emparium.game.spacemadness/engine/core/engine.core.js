@@ -8,16 +8,7 @@ engine.models = {};
 
             function Core() {
                 this.globals = {
-                    canvas: null,
-                    context: null,
-                    imageObjBackground: new Image(),
-                    imageRock: new Image(),
-                    imageBonus: new Image(),
-
-                    // background value's
-                    backgroundVelocity: 0,
-                    backGroundX: 840,
-                    backGroundY: 440,
+                    // move to draw module
 
                     Damage_MAX: 420,
                     Hit_Value: 35,
@@ -27,7 +18,6 @@ engine.models = {};
                     bonusArr: [],
 
                     // value's for rotate the rock's
-                    TO_RADIANS: Math.PI / 180,
 
                     explosionArray: new Array(),
                     rocksArr: [],
@@ -41,9 +31,8 @@ engine.models = {};
                     IsGameStarted: false,
                     isReadyToExit: false,
                     IsSquadLeader: false,
-                    isHelmsLocked: false,
+                    frameCounter : 0,
                     FPS: 1000 / 30,
-                    backGroundSpeed: 2,
                     onScreenText: ""
                 };
                 this.draw = null;
@@ -58,6 +47,8 @@ engine.models = {};
     core.prototype.initPlayers = function() {
         this.globals.player1Ship = new engine.models.ship('squadLeader', 200, 430, 60, 60, 'Images/spaceship1.png');
         this.globals.player2Ship = new engine.models.ship('wingman', 700, 430, 60, 60, 'Images/spaceship2.png');
+        this.update.setPlayers(this.globals.player1Ship,this.globals.player2Ship);
+        this.draw.setPlayers(this.globals.player1Ship,this.globals.player2Ship)
     };
 
     core.prototype.initAnimations = function() {
@@ -97,12 +88,16 @@ engine.models = {};
         // this.ws = new XSockets.WebSocket(url + controller + '?gameId=' + settings.gameId);
         this.ws = new XSockets.WebSocket('ws://localhost:4502/SpaceMadness?gameId=22');
 
+
+
         this.ws.on(XSockets.Events.open, function(data) {
             console.log('Open', data);
 
             core.ws.publish("joinGame", {
                 roomId: '22'
             });
+            core.draw.setSocket(core.ws);    
+            core.update.socket = core.ws;
         });
 
         this.ws.on(XSockets.Events.close, function(data) {
@@ -110,16 +105,16 @@ engine.models = {};
         });
 
         this.ws.on("wingManMove", function(data) {
-            if (core.globals.IsGameStarted) {
+            // if (core.globals.IsGameStarted) {
                 player2.x = data.x;
                 player2.y = data.y;
-            }
+            // }
         });
 
         this.ws.on("wingManExplode", function(data) {
             if (core.globals.IsGameStarted) {
                 player2.takeHit();
-                updateScore(2, "hit");
+                core.update.updateScores(2, "hit");
             }
         });
 
@@ -136,31 +131,25 @@ engine.models = {};
 
             switch (data.type) {
                 case 0:
-                    core.update.updateScore(2, "bonus");
+                    core.update.updateScore(1000, "wingman");
                     break;
                 case 1:
                     if (wingMan.fx) {
                         wingMan.fx.clearFX(wingMan);
                     }
-                    wingMan.isUnderEffect = true;
-                    effect = new shieldsEffect();
-                    wingMan.fx = effect;
+                    wingMan.fx = new fx.shield();
                     break;
                 case 2:
                     if (wingMan.fx) {
                         wingMan.fx.clearFX(wingMan);
                     }
-                    wingMan.isUnderEffect = true;
-                    effect = new shrinkEffect(32);
-                    wingMan.fx = effect;
+                    wingMan.fx = new fx.shrink(32);
                     break;
                 case 3:
                     if (wingMan.fx) {
                         wingMan.fx.clearFX(wingMan);
                     }
-                    wingMan.isUnderEffect = true;
-                    var effect = new drunkEffect();
-                    wingMan.fx = effect;
+                    wingMan.fx = new fx.drunk(30, cglbl.backGroundX);
                     break;
             }
         });
@@ -198,6 +187,9 @@ engine.models = {};
             core.globals.rocksArr = data;
             core.globals.backGroundSpeed = 2;
             core.globals.IsGameStarted = true;
+            player1.helmslock = false;
+            player2.helmslock = false;
+
             core.gameloop();
         });
 
@@ -219,10 +211,10 @@ engine.models = {};
         });
 
         this.ws.on("shipMoved", function(data) {
-            if (core.globals.IsGameStarted) {
+            // if (core.globals.IsGameStarted) {
                 player2.moveHorizontl(data.x);
                 player2.moveVertical(data.y);
-            }
+            // }
         });
     };
 
@@ -230,8 +222,7 @@ engine.models = {};
         var core = this;
         this.globals.frameCounter++;
         if (!this.globals.IsGameStarted) {
-            if (this.globals.frameCounter % 60 == 0 && this.globals.frameCounter <
-                420) {
+            if (this.globals.frameCounter % 60 == 0 && this.globals.frameCounter < 420) {
                 draw.drawTimer(this.globals.CountdownTimer);
                 this.globals.CountdownTimer--;
                 if (this.globals.CountdownTimer <= 0) {
@@ -239,10 +230,8 @@ engine.models = {};
                 }
             }
         } else {
-            this.globals.scorePlayer1++;
-            this.globals.scorePlayer2++;
             this.draw.drawBackround();
-            this.draw.drawScores();
+            this.draw.drawScores(this.globals.scorePlayer1,this.globals.scorePlayer2);
             this.draw.drawRocks();
             this.draw.drawBonus();
             this.draw.drawLifeBar();
@@ -250,23 +239,24 @@ engine.models = {};
             this.update.checkColision();
             this.update.updateBonusEffect(this.globals.player1Ship);
             this.update.updateBonusEffect(this.globals.player2Ship);
+            this.update.updateScores(1);
             this.draw.drawText();
         }
+
+        this.globals.frameCounter++;
+
         window.requestAnimFrame(function() {
             core.gameloop();
         });
     };
 
     core.prototype.startEngine = function() {
-        this.draw = new engine.draw(this);
-        this.update = new engine.update(this);
-        this.globals.imageRock.src = "Images/asteroid.png";
-        this.globals.imageObjBackground.src = "Images/space_background.jpg";
-        this.globals.imageBonus.src = "Images/bonus1.png";
-
-        this.globals.canvas = document.getElementById('myCanvas');
-        this.globals.context = this.globals.canvas.getContext('2d');
+        this.draw = new engine.draw(0,this.globals);
+        this.update = new engine.update(this.globals,840,440);
+        this.draw.init();    
         this.initPlayers();
+        this.update.init();
+
         this.initAnimations();
         this.initServerConnection();
     };
