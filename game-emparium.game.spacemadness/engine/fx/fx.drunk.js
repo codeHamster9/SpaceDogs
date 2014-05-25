@@ -24,7 +24,7 @@
         };
 
         FxDrunk.prototype.clearFX = function(ship) {
-            base.prototype.clearFX.call(this, ship);
+            base.prototype.clearFX(ship);
         };
 
         return FxDrunk;

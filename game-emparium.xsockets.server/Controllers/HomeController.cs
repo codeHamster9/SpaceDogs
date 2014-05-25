@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace game_emparium.xsockets.server.Controllers
+namespace game_emparium.xsockets.server.Models
 {
     public class HomeController : Controller
     {

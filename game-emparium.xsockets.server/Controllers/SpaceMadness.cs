@@ -1,122 +1,99 @@
-using game_emparium.xsockets.server.Models;
 using game_emparium.xsockets.server.Services;
+using game_emparium.xsockets.server.Models;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
-using System.Timers;
 using XSockets.Core.Common.Socket.Event.Arguments;
-using XSockets.Core.Common.Socket.Event.Interface;
+using XSockets.Core.Common.Socket.Event.Attributes;
 using XSockets.Core.XSocket;
 using XSockets.Core.XSocket.Helpers;
 
 namespace game_emparium.xsockets.server.Controllers
 {
-
-    public class Person
-    {
-        public int Age { get; set; }
-        public string Name { get; set; }
-    }
     public class SpaceMadness : XSocketController
     {
+        static List<Player> connectedPlayers = new List<Player>();
+        static readonly ConcurrentDictionary<string, Game> games = new ConcurrentDictionary<string, Game>();
 
-        public static readonly ConcurrentDictionary<string, List<Player>> players = new ConcurrentDictionary<string, List<Player>>();
-        private const string player1Msg = "leaving Room";
-        private const string player2Msg = "player2 left the room, BYE BYE...";
-        private const string lobbyUrl = "http://localhost:49950/Lobby/leaveRoom?roomId=";
-        readonly System.Timers.Timer bonusTimer;
-        Random RandomEngine;
-
-
-        public SpaceMadness()
+        [NoEvent]
+        public string GameId { get; set; }
+        void ItemGen_OnDataReady(object sender, OnDataReadyArgs e)
         {
-            RandomEngine = new Random();
-            bonusTimer = new System.Timers.Timer();
-            this.OnOpen += SpaceMadness_OnOpen;
-            bonusTimer.Interval = Math.Floor(RandomEngine.NextDouble() * 120000) + 3000;
-            bonusTimer.Elapsed += new ElapsedEventHandler(TimeElapsed);
-            bonusTimer.Enabled = true;
-
+            this.SendToAll(e.Data, "setItemData");
         }
-
+        void SpaceMadness_OnClose(object sender, OnClientDisconnectArgs e)
+        {
+            Game game;
+            games.TryRemove(GameId, out game);
+            this.SendTo(p => p.GameId == GameId, null, "endGame");
+            
+        }
         void SpaceMadness_OnOpen(object sender, OnClientConnectArgs e)
         {
-            this.SendToAll("1", "startGame");
+#if DEBUG
+            Debug.WriteLine(e.Controller.ClientGuid);
+#endif
+            this.GameId = e.Controller.GetParameter("gameId");
         }
-
-
-        public void JoinGame(string userId, string roomId)
+        public SpaceMadness()
         {
-            List<Player> groupClients;
-            if (players.TryGetValue(roomId, out groupClients))
+            this.OnOpen += SpaceMadness_OnOpen;
+            this.OnClose += SpaceMadness_OnClose;
+        }
+        private void CreateGame()
+        {
+            Game game = new Game(GameId);
+            game.Players.Add(new Player() { ConnectionID = this.ClientGuid, SquadId = GameId });
+            games.TryAdd(GameId, game);
+        }
+        public void JoinGame(string roomId)
+        {
+            Player squadLeader = null;
+            Player wingman = null;
+            Game game;
+
+            if (games.TryGetValue(GameId, out game))
             {
-                //just for Debug 
-                if (groupClients.Count > 1)
-                    groupClients.Clear();
-                //debug
+                wingman = new Player() { ConnectionID = this.ClientGuid, SquadId = GameId };
+                squadLeader = game.Players[0];
+                game.Players.Add(wingman);
 
-                //groupClients.Add(new Player { UserID = userId, ConnectionID = Context.ConnectionId, Score = 0 });
-                players.TryAdd(roomId, groupClients);
-                if (players[roomId].Count == 2)
+                if (game.Players.Count == 2)
                 {
-                    //BonusService.bonusTimer.Start();
-                    var player1 = groupClients[0].ConnectionID;
-                    var player2 = groupClients[1].ConnectionID;
-                    //Clients.Client(player1).startGame(1);
-                    //Clients.Client(player2).startGame(2);
-                    this.SendToAll(null, "startGame");
-
-                }
-                else
-                {
-                    //Clients.Caller.playerWait();
-                }
+                    game.Init();
+                    game.ItemGen.OnDataReady += this.ItemGen_OnDataReady;
+                    Rock[] rockArray = game.RockGen.InitRockArray();
+                    this.SendTo<SpaceMadness>(p => p.ClientGuid == squadLeader.ConnectionID, rockArray, "startGame");
+                    this.Send(rockArray, "startGame");
+                }          
             }
             else
             {
-                //players.TryAdd(roomId, new List<Player>() { new Player { UserID = userId, ConnectionID = Context.ConnectionId, Score = 0 } });
-                this.SendToAll("", "startGame");
-
+                CreateGame();
+                this.Send(null, "playerWait");
             }
-        }
-        public void EndGame(string roomId)
-        {
-            //var caller = Context.ConnectionId;
-            List<Player> groupClients;
-            //get the group
-            if (players.TryGetValue(roomId, out groupClients))
-            {
-                //find the caller
-                //var player;// groupClients.Where(p => p.ConnectionID.Equals(caller)).FirstOrDefault();
-                if (players != null)
-                {
-                    //notify game ended and redirect
-                    var player1 = groupClients[0].ConnectionID;
-                    var player2 = groupClients[1].ConnectionID;
-                    //players.TryRemove(roomId, out groupClients);
-                    //Clients.Client(player1).redirectToLobby(lobbyUrl + roomId, player1Msg);
-                    //Clients.Client(player2).redirectToLobby(lobbyUrl + roomId, player2Msg);
-                }
-            }
-        }
-        public void InitRockArray(ITextArgs textArgs)
-        {
-            Rock[] data = RockService.InitRockArray();
-            this.SendToAll(data, "setRockArray");
         }
         public void GetNewRock(int index)
         {
-            Rock rock = RockService.getSingleRock(index);
-            this.SendToAll(rock, "addNewRock");
+            Game game;
+            if (games.TryGetValue(GameId, out game))
+            {
+                Rock rock = game.RockGen.getSingleRock(index);
+                this.SendToAll(rock, "setNewRock");
+            }
+
 #if DEBUG
-            Debug.Write(DateTime.Now.ToString("hh:mm:ss:fff") + " " + "rock Generated" + " " + "index : " + index + "\n");  
+            Debug.Write(DateTime.Now.ToString("hh:mm:ss:fff") + " " + "rock Generated" + " " + "index : " + index + "\n");
 #endif
         }
-        public void MoveShip(int x, int y, int id)
+        public void MoveShip(int x, int y)
         {
-            this.SendToAllExceptMe(new Point(x, y), "shipMoved");
+            dynamic data = new ExpandoObject();
+            data.x = x;
+            data.y = y;
+            this.SendToAllExceptMe((Object)data, "shipMoved");
         }
         public void PlayerBump()
         {
@@ -132,27 +109,7 @@ namespace game_emparium.xsockets.server.Controllers
             dynamic data = new ExpandoObject();
             data.type = type;
             data.bonusIndex = index;
-            this.SendToAllExceptMe((Object)data, "wingmanTakesBonus");
+            this.SendToAllExceptMe((Object)data, "wingmanTakesItem");
         }
-
-        void TimeElapsed(object sender, ElapsedEventArgs e)
-        {
-            var data = BonusService.InitBonusData();
-            this.SendToAll(data, "setBonusData");
-            bonusTimer.Interval = Math.Floor(RandomEngine.NextDouble() * 120000) + 3000;
-        }
-
-    }
-
-    public struct Point
-    {
-        public Point(int _x, int _y)
-            : this()
-        {
-            this.X = _x;
-            this.Y = _y;
-        }
-        public double X { get; set; }
-        public double Y { get; set; }
     }
 }

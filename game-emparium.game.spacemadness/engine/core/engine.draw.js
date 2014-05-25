@@ -1,19 +1,19 @@
 var engine, common;
-(function (engine) {
+(function(engine) {
     //'use strict';
     var cglbl,
-     DEBUG = true,
-     draw = (function () {
+        DEBUG = false,
+        draw = (function() {
 
-         function Draw(core) {
-             this.core = core;
-             cglbl = core.globals;
-         }
+            function Draw(core) {
+                this.core = core;
+                cglbl = core.globals;
+            }
 
-         return Draw;
-     }());
+            return Draw;
+        }());
 
-    draw.prototype.drawBackround = function () {
+    draw.prototype.drawBackround = function() {
 
         cglbl.context.clearRect(0, 0, cglbl.canvas.width, cglbl.canvas.height);
 
@@ -32,23 +32,24 @@ var engine, common;
         this.core.globals.context.drawImage(this.core.globals.imageObjBackground, 0, this.core.globals.backgroundVelocity);
     };
 
-    draw.prototype.drawLifeBar = function (minLifeBar, playerIndex) {
-        var y = 100 + minLifeBar;
+    draw.prototype.drawLifeBar = function() {
+
+        var leader = 489 - cglbl.player1Ship.health + 100;
+        var wingman = 489 - cglbl.player2Ship.health + 100;
+
         //draw bar Frame
         cglbl.context.beginPath();
-        if (playerIndex === 1) {
-            cglbl.context.moveTo(10, 100);
-            cglbl.context.lineTo(10, 490);
-            cglbl.context.lineTo(30, 490);
-            cglbl.context.lineTo(30, 100);
-            cglbl.context.lineTo(10, 100);
-        } else {
-            cglbl.context.moveTo(870, 100);
-            cglbl.context.lineTo(870, 490);
-            cglbl.context.lineTo(890, 490);
-            cglbl.context.lineTo(890, 100);
-            cglbl.context.lineTo(870, 100);
-        }
+        cglbl.context.moveTo(10, 100);
+        cglbl.context.lineTo(10, 490);
+        cglbl.context.lineTo(30, 490);
+        cglbl.context.lineTo(30, 100);
+        cglbl.context.lineTo(10, 100);
+        cglbl.context.moveTo(870, 100);
+        cglbl.context.lineTo(870, 490);
+        cglbl.context.lineTo(890, 490);
+        cglbl.context.lineTo(890, 100);
+        cglbl.context.lineTo(870, 100);
+
         cglbl.context.closePath();
         cglbl.context.lineWidth = 5;
         cglbl.context.strokeStyle = 'blue';
@@ -56,62 +57,46 @@ var engine, common;
 
         //draw life bar
         cglbl.context.beginPath();
-        if (playerIndex === 1) {
-            cglbl.context.moveTo(11, y); //start
-            cglbl.context.lineTo(11, 489); //left
-            cglbl.context.lineTo(29, 489); //footer
-            cglbl.context.lineTo(29, y); //right
-            cglbl.context.lineTo(11, y); //head
-        } else {
-            cglbl.context.moveTo(871, y); //start
-            cglbl.context.lineTo(871, 489); //left
-            cglbl.context.lineTo(889, 489); //footer
-            cglbl.context.lineTo(889, y); //right
-            cglbl.context.lineTo(871, y); //head
-        }
-
+        cglbl.context.moveTo(11, 489); //start
+        cglbl.context.lineTo(29, 489); //left
+        cglbl.context.lineTo(29, leader); //footer
+        cglbl.context.lineTo(11, leader); //right
+        cglbl.context.lineTo(11, 489); //head
+        cglbl.context.fillStyle = "rgba(255,0,0,0.5)";
+        cglbl.context.fill();
+        cglbl.context.closePath();
+        cglbl.context.moveTo(871, 489); //start
+        cglbl.context.lineTo(889, 489); //left
+        cglbl.context.lineTo(889, wingman); //footer
+        cglbl.context.lineTo(871, wingman); //right
+        cglbl.context.lineTo(871, 489); //head
         cglbl.context.fillStyle = "rgba(255,0,0,0.5)";
         cglbl.context.fill();
         cglbl.context.closePath();
     };
 
-    draw.prototype.drawPlayer = function (ship) {
-        if (ship.isHit) {
-            this.drawExplosion(ship);
-        } else {
-            if (DEBUG) {
-                //draw hit area
-                var center = common.utils.getCenterPoint(ship);
-                cglbl.context.beginPath();
-                cglbl.context.arc(center.x, center.y, (ship.width / 2) + 3, 0, 2 * Math.PI, false);
-                cglbl.context.fillStyle = "rgba(125,255,125,0.5)";
-                cglbl.context.closePath();
-                cglbl.context.fill();
+    draw.prototype.drawPlayers = function() {
 
-                //draw center
-                cglbl.context.beginPath();
-                cglbl.context.arc(center.x, center.y, 3, 0, 2 * Math.PI, false);
-                cglbl.context.fillStyle = "rgba(255,0,0,1.5)";
-                cglbl.context.closePath();
-                cglbl.context.fill();
+        var leader = cglbl.player1Ship;
+        var wingman = cglbl.player2Ship;
+        var shipPosition;
 
-                // draw x,y
-                cglbl.context.beginPath();
-                cglbl.context.fillStyle = "rgba(255,255,255,1.5)";
-                cglbl.context.font = 'italic bold 15px sans-serif';
-                cglbl.context.textBaseline = 'center';
-                cglbl.context.fillText(ship.x + "," + ship.y, ship.x + 50, ship.y);
-                cglbl.context.closePath();
-                cglbl.context.fill();
-            }
-            // cglbl.context.drawImage(ship.image, ship.x, ship.y, ship.width, ship.height);
+        if (leader.isHit)
+            this.drawExplosion(leader);
+        else {
+            shipPosition = leader.getPosition();
+            cglbl.context.drawImage(leader.image, shipPosition.x, shipPosition.y, leader.width, leader.height);
         }
-        if (ship.Transform) {
-            // this.drawShipTransform(ship);
+
+        if (wingman.isHit)
+            this.drawExplosion(wingman);
+        else {
+            shipPosition = wingman.getPosition();
+            cglbl.context.drawImage(wingman.image, shipPosition.x, shipPosition.y, wingman.width, wingman.height);
         }
     };
 
-    draw.prototype.drawScores = function () {
+    draw.prototype.drawScores = function() {
         cglbl.context.fillStyle = "rgba(255,0,0,0.5)";
         cglbl.context.font = 'italic bold 30px sans-serif';
         cglbl.context.textBaseline = 'bottom';
@@ -119,12 +104,12 @@ var engine, common;
         cglbl.context.fillText(cglbl.scorePlayer2, 780, 35);
     };
 
-    draw.prototype.drawTimer = function (value) {
+    draw.prototype.drawTimer = function(value) {
         // draw background and both players
         cglbl.context.clearRect(0, 0, cglbl.canvas.width, cglbl.canvas.height);
         cglbl.context.drawImage(cglbl.imageObjBackground, 0, 0);
-        this.drawLifeBar(cglbl.player2Ship.damageBar, 2);
-        this.drawLifeBar(cglbl.player1Ship.damageBar, 1);
+        this.drawLifeBar(cglbl.player2Ship.health, 2);
+        this.drawLifeBar(cglbl.player1Ship.health, 1);
         this.drawPlayer(cglbl.player1Ship);
         this.drawPlayer(cglbl.player2Ship);
         cglbl.context.fillStyle = "rgba(255,0,0,0.5)";
@@ -133,7 +118,7 @@ var engine, common;
         cglbl.context.fillText(value, 430, 280);
     };
 
-    draw.prototype.drawBonus = function () {
+    draw.prototype.drawBonus = function() {
         var i;
         for (i = cglbl.bonusArr.length - 1; i >= 0; i--) {
             if (cglbl.bonusArr[i].timeout > 0) {
@@ -143,7 +128,7 @@ var engine, common;
         }
     };
 
-    draw.prototype.drawRocks = function () {
+    draw.prototype.drawRocks = function() {
         var i = 0;
         for (i; i < cglbl.rocksArr.length; ++i) {
             this.drawRotatedImage(cglbl.imageRock, cglbl.rocksArr[i]);
@@ -201,16 +186,19 @@ var engine, common;
         }
     };
 
-    draw.prototype.drawExplosion = function (ship) {
+    draw.prototype.drawExplosion = function(ship) {
+        var imageObj = new Image(),
+            shipPos = ship.getPosition();
         if (ship.frameIndex < cglbl.explosionArray.length) {
-            cglbl.context.drawImage(cglbl.explosionArray[ship.frameIndex].image, ship.x - 30, ship.y - 30);
+            imageObj.src = cglbl.explosionArray[ship.frameIndex];
+            cglbl.context.drawImage(imageObj, shipPos.x - 30, shipPos.y - 30);
             ship.frameIndex++;
         } else {
             ship.isHit = false;
         }
     };
 
-    draw.prototype.drawShipTransform = function (ship) {
+    draw.prototype.drawShipTransform = function(ship) {
         if (ship.frameIndex < cglbl.shipTransform.length) {
             cglbl.context.drawImage(cglbl.shipTransform[ship.frameIndex].image, ship.x, ship.y, 120, 120);
             ship.frameIndex++;
@@ -219,14 +207,14 @@ var engine, common;
         }
     };
 
-    draw.prototype.drawText = function (txt) {
+    draw.prototype.drawText = function() {
         cglbl.context.fillStyle = "rgba(255,0,0,0.5)";
         cglbl.context.font = 'italic bold 35px sans-serif';
         cglbl.context.textBaseline = 'bottom';
-        cglbl.context.fillText(txt, cglbl.canvas.clientWidth / 2, 50);
+        cglbl.context.fillText(cglbl.onScreenText, cglbl.canvas.clientWidth / 2, 50);
     };
 
-    draw.prototype.drawRotatedImage = function (image, obj) {
+    draw.prototype.drawRotatedImage = function(image, obj) {
 
         // save the current co-ordinate system 
         // before we screw with it

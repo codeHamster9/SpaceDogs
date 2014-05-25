@@ -1,4 +1,6 @@
-﻿function bonusItem() {
+﻿//'use strict';
+
+function bonusItem() {
     this.x = 0;
     this.y = 0;
     this.height = 0;

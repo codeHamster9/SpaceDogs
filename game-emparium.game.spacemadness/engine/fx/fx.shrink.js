@@ -14,7 +14,7 @@
         FxShrink.prototype.clearFX = function(ship) {
             ship.height = 60;
             ship.width = 60;
-            base.prototype.clearFX.call(this, ship);
+            base.prototype.clearFX(ship);
 
         };
 

@@ -20,7 +20,7 @@
 
         FxShield.prototype.clearFX = function(ship) {
             ship.shieldsUp = false;
-            base.prototype.clearFX.call(this, ship);
+            base.prototype.clearFX(ship);
         };
 
         return FxShield;

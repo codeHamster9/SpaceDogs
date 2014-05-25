@@ -5,7 +5,7 @@ var common = {};
 common.utils = {
 
     timeNow: function () {
-    	var date = new Date;
+        var date = new Date();
         return ((date.getHours() < 10) ? "0" : "") + date.getHours() + ":" + ((date.getMinutes() <
             10) ? "0" : "") + date.getMinutes() + ":" + ((date.getSeconds() < 10) ? "0" : "") +
             date.getSeconds() + ":" + ((date.getMilliseconds() < 100) ? ((date.getMilliseconds() <
@@ -21,8 +21,9 @@ common.utils = {
     getUrlVars: function () {
         var vars = [],
             hash,
-            hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-        for (var i = 0; i < hashes.length; i++) {
+            hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&'),
+            i;
+        for (i = 0; i < hashes.length; i++) {
             hash = hashes[i].split('=');
             vars.push(hash[0]);
             vars[hash[0]] = hash[1];

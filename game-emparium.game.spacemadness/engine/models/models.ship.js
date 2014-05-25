@@ -1,48 +1,80 @@
-﻿'use strict';
+﻿//'use strict';
 
-(function (engine) {
+(function(engine) {
 
-    var ship = (function () {
+    var ship = (function() {
 
-        function Ship(id, x, y, width, height) {
-            this.id = id;
-            this.x = x;
-            this.y = y;
-            this.oldX = x;
-            this.oldY = y;
+        function Ship(id, x, y, width, height, url) {
+            var _id = id,
+                _oldX = x,
+                _oldY = y,
+                _x = x,
+                _y = y,
+                _url = url;
+
+            this.getPosition = function() {
+                return {
+                    x: _x,
+                    y: _y
+                };
+            };
+
+            this.moveVertical = function(move) {
+                _y = move;
+                _oldY = move;
+            };
+
+            this.moveHorizontl = function(move) {
+                _x = move;
+                _oldX = move;
+            };
+
+            this.getShipCenter = function() {
+                return {
+                    x: (_x + (this.width / 2)),
+                    y: (_y + (this.height / 2))
+                };
+            };
+
             this.width = width;
             this.height = height;
-            this.damageBar = 0;
+            this.type = "Ship";
+
+            this.health = 489;
             this.frameIndex = 0;
             this.isHit = false;
             this.isUnderEffect = false;
             this.shieldsUp = false;
-            this.fx = new fx.base(); //effect Object
-            this.image = new Image();
+            this.fx = null; //effect Object
+            this.image = (function() {
+                var img = new Image();
+                img.src = _url;
+                return img;
+            }());
             this.Transform = {};
         }
 
-        Ship.prototype.applyEffect = function () {
+
+
+        Ship.prototype.applyEffect = function() {
             if (this.fx.duration >= 0) {
                 this.fx.apply(this);
             }
         };
 
-        Ship.prototype.explode = function (rockIndex) {
+        Ship.prototype.explode = function() {
             this.isHit = true;
             this.frameIndex = 0;
             this.takeHit();
-            //hub.server.playerExplode(rockIndex);
         };
 
-        Ship.prototype.takeHit = function (Hit_Value, Damage_MAX) {
+        Ship.prototype.takeHit = function(hit) {
             this.isHit = true;
             this.frameIndex = 0;
-            if (this.damageBar + Hit_Value < Damage_MAX) {
-                this.damageBar += Hit_Value;
-            }
-            else {
-                this.damageBar = 0;
+            if (this.health - 49 > 0) {
+                this.health -= 49;
+            } else {
+                this.health = 489;
             }
         };
         return Ship;

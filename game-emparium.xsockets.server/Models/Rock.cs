@@ -1,4 +1,4 @@
-﻿using game_emparium.xsockets.server.Controllers;
+﻿using game_emparium.xsockets.server.Models;
 using game_emparium.xsockets.server.Interfaces;
 using System;
 using System.Collections.Generic;

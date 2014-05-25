@@ -5,10 +5,16 @@ using System.Web;
 
 namespace game_emparium.xsockets.server.Models
 {
-    public class Player
+    public class Player : IEquatable<Player>
     {
-        public string UserID { get; set; }
-        public string ConnectionID { get; set; }
+        public Guid ConnectionID { get; set; }
         public int Score { get; set; }
+        public string SquadId { get; set; }
+
+        public bool Equals(Player other)
+        {
+            if (other == null) return false;
+            return (this.ConnectionID.Equals(other.ConnectionID));
+        }
     }
 }

@@ -193,13 +193,14 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Models\Game.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SpaceMadness.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Interfaces\ICollideable.cs" />
     <Compile Include="Models\CollideableType.cs" />
-    <Compile Include="Services\BonusService.cs" />
-    <Compile Include="Services\RockService.cs" />
+    <Compile Include="Services\ItemGenerator.cs" />
+    <Compile Include="Services\RockGenerator.cs" />
     <Compile Include="Models\BonusData.cs" />
     <Compile Include="Models\BonusItem.cs" />
     <Compile Include="Models\Player.cs" />
@@ -369,7 +370,7 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" /> -->
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

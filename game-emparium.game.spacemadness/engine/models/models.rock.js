@@ -1,4 +1,4 @@
-﻿'use strict';
+﻿//'use strict';
 var engine;
 (function (engine) {
     var rock = (function (rock) {

@@ -3,79 +3,68 @@ var engine = {};
 engine.models = {};
 
 (function(engine) {
+    var DEBUG = false,
+        core = (function() {
 
-    var core = (function() {
+            function Core() {
+                this.globals = {
+                    canvas: null,
+                    context: null,
+                    imageObjBackground: new Image(),
+                    imageRock: new Image(),
+                    imageBonus: new Image(),
 
-        function Core() {
-            this.globals = {
-                canvas: null,
-                context: null,
-                imageObjBackground: new Image(),
-                imageRock: new Image(),
-                imageBonus: new Image(),
+                    // background value's
+                    backgroundVelocity: 0,
+                    backGroundX: 840,
+                    backGroundY: 440,
 
-                // background value's
-                backgroundVelocity: 0,
-                backGroundX: 840,
-                backGroundY: 440,
+                    Damage_MAX: 420,
+                    Hit_Value: 35,
 
-                Damage_MAX: 420,
-                Hit_Value: 35,
+                    // value's for the bonus
+                    frameCounter: 0,
+                    bonusArr: [],
 
-                // value's for the bonus
-                frameCounter: 0,
-                bonusArr: [],
+                    // value's for rotate the rock's
+                    TO_RADIANS: Math.PI / 180,
 
-                // value's for rotate the rock's
-                TO_RADIANS: Math.PI / 180,
+                    explosionArray: new Array(),
+                    rocksArr: [],
+                    shipTransform: [],
 
-                explosionArray: [],
-                rocksArr: [],
-                shipTransform: [],
+                    scorePlayer2: 0,
+                    scorePlayer1: 0,
+                    player1Ship: null,
+                    player2Ship: null,
+                    CountdownTimer: 2,
+                    IsGameStarted: false,
+                    isReadyToExit: false,
+                    IsSquadLeader: false,
+                    isHelmsLocked: false,
+                    FPS: 1000 / 30,
+                    backGroundSpeed: 2,
+                    onScreenText: ""
+                };
+                this.draw = null;
+                this.update = null;
+                this.ws = {};
+            }
 
-                scorePlayer2: 0,
-                scorePlayer1: 0,
-                player1Ship: null,
-                player2Ship: null,
-                CountdownTimer: 2,
-                IsGameStarted: false,
-                isReadyToExit: false,
-                isHelmsLocked: false,
-                userId: null,
-                roomId: null,
-                FPS: 1000 / 60,
-                backGroundSpeed: 2,
-                onScreenText: ""
+            return Core;
 
-            };
-            this.draw = null;
-            this.update = null;
-            this.ws = {};
-        }
-
-        return Core;
-
-    }());
+        }());
 
     core.prototype.initPlayers = function() {
-        this.globals.player1Ship = new engine.models.ship('player', 200, 430, 60, 60);
-        this.globals.player1Ship.image.src = 'Images/spaceship1.png';
-
-        // Player 2
-        this.globals.player2Ship = new engine.models.ship('wingman', 700, 430, 60, 60);
-        this.globals.player2Ship.image.src = 'Images/spaceship2.png';
+        this.globals.player1Ship = new engine.models.ship('squadLeader', 200, 430, 60, 60, 'Images/spaceship1.png');
+        this.globals.player2Ship = new engine.models.ship('wingman', 700, 430, 60, 60, 'Images/spaceship2.png');
     };
 
     core.prototype.initAnimations = function() {
         var i, j = 0,
             k = 0;
         for (i = 0; i < 7 * 5; i++) {
-            this.globals.explosionArray[i] = {
-                image: new Image()
-            };
-
-            this.globals.explosionArray[i].image.src = "Images/Frames/e" + (j + 1) +
-                ".png";
+            this.globals.explosionArray[i] = "Images/Frames/e" + (j + 1) + ".png";
             if (i % 5 === 0) {
                 j++;
             }
@@ -95,108 +84,59 @@ engine.models = {};
     };
 
     core.prototype.initServerConnection = function() {
-        var qs = "roomId=1" + "&userId=2",
-            that = this;
+        var core = this,
+            player1 = this.globals.player1Ship,
+            player2 = this.globals.player2Ship,
 
-        this.ws = new XSockets.WebSocket('ws://localhost:4502/SpaceMadness');
+            url = 'ws://localhost:4502',
+            controller = '/SpaceMadness',
+            settings = {
+                gameId: '22'
+            };
+
+        // this.ws = new XSockets.WebSocket(url + controller + '?gameId=' + settings.gameId);
+        this.ws = new XSockets.WebSocket('ws://localhost:4502/SpaceMadness?gameId=22');
 
         this.ws.on(XSockets.Events.open, function(data) {
             console.log('Open', data);
 
-            that.ws.publish("joinGame", {
-                userId: 1,
-                roomId: 2
+            core.ws.publish("joinGame", {
+                roomId: '22'
             });
+        });
 
+        this.ws.on(XSockets.Events.close, function(data) {
+            console.log('Close', data);
         });
 
         this.ws.on("wingManMove", function(data) {
-            if (that.globals.IsGameStarted) {
-                that.globals.player2Ship.x = data.x;
-                that.globals.player2Ship.y = data.y;
+            if (core.globals.IsGameStarted) {
+                player2.x = data.x;
+                player2.y = data.y;
             }
         });
 
         this.ws.on("wingManExplode", function(data) {
-            if (that.globals.IsGameStarted) {
-                that.globals.player2Ship.takeHit();
+            if (core.globals.IsGameStarted) {
+                player2.takeHit();
                 updateScore(2, "hit");
             }
         });
 
-        that.ws.on("wingmanBump", function() {
-            that.globals.player1Ship.fx = new fx.bump(false);
-            that.globals.player1Ship.isUnderEffect = true;
+        core.ws.on("wingmanBump", function() {
+            player1.fx = new fx.bump(false);
+            player1.isUnderEffect = true;
             console.log("bumped");
-        });
-
-        this.ws.on("addNewRock", function(rock) {
-            that.globals.rocksArr[rock.index] = rock;
-            console.info(common.utils.timeNow(), rock.index);
-        });
-
-        this.ws.on("setRockArray", function(data) {
-            that.globals.rocksArr = data;
-        });
-
-        this.ws.on("setBonusData", function(data) {
-            that.update.updateBonus(data);
-            // console.warn(common.utils.timeNow(), data);
-        });
-
-        this.ws.on("startGame", function(playerIndex) {
-            switch (playerIndex) {
-                case 1:
-                    // this.globals.player1Ship.image.src = 'Images/spaceship1.png'
-                    that.globals.player1Ship.image.src =
-                        'Images/New ship/tmp-35.gif';
-                    that.globals.player2Ship.image.src = 'Images/spaceship2.png';
-                    that.globals.player1Ship.Transform = true;
-                    that.globals.player1Ship.frameIndex = 0;
-
-                    break;
-                case 2:
-                    that.globals.player1Ship.image.src = 'Images/spaceship2.png';
-                    that.globals.player2Ship.image.src = 'Images/spaceship1.png';
-                    that.globals.player1Ship.x = that.globals.player2Ship.x;
-                    that.globals.player1Ship.y = that.globals.player2Ship.y;
-                    that.globals.player2Ship.x = that.globals.player1Ship.oldX;
-                    that.globals.player2Ship.y = that.globals.player1Ship.oldY;
-
-                    break;
-
-            }
-            window.showMessage("Click 'Esc' to exit the room !!!");
-            that.globals.backGroundSpeed = 2;
-            that.ws.publish("initRockArray");
-            that.globals.IsGameStarted = true;
-            that.gameloop();
-        });
-
-        this.ws.on("playerWait", function(data) {
-            showMessage("Wait for another player to arrive ...");
-            drawBackround();
-            drawScore.cores();
-            drawLifeBar(newEngine.core.globals.player1Ship.damageBar, 1);
-            drawLifeBar(wingMan.damageBar, 2);
-            drawPlayer(newEngine.core.globals.player1Ship);
-            drawPlayer(wingMan);
-        });
-
-        this.ws.on("redirectToLobby", function(urlTarget, msg) {
-            showMessage(msg);
-            FPS = 0;
-            window.location = urlTarget;
         });
 
         this.ws.on("wingmanTakesBonus", function(data) {
             bonusArr[data.bonusIndex].timeout = 0;
 
-            var wingman = that.globals.player1Ship;
+            var wingman = player1;
 
             switch (data.type) {
                 case 0:
-                    that.update.updateScore(2, "bonus");
+                    core.update.updateScore(2, "bonus");
                     break;
                 case 1:
                     if (wingMan.fx) {
@@ -225,16 +165,69 @@ engine.models = {};
             }
         });
 
+        this.ws.on("setNewRock", function(rock) {
+            core.globals.rocksArr[rock.index] = rock;
+            if (DEBUG)
+                console.info(common.utils.timeNow(), rock.index);
+        });
+
+        this.ws.on("setItemsData", function(data) {
+            core.update.updateBonus(data);
+            if (DEBUG)
+                console.warn(common.utils.timeNow(), data);
+        });
+
+        this.ws.on("startGame", function(data) {
+
+
+            switch (core.globals.IsSquadLeader) {
+
+                case false:
+                    player1.image.src = 'Images/spaceship2.png';
+                    player2.image.src = 'Images/spaceship1.png';
+
+                    var oldPos = player1.getPosition();
+                    player1.getPosition().x = player2.getPosition().x;
+                    player1.getPosition().y = player2.getPosition().y;
+                    player2.getPosition().x = oldPos.x;
+                    player2.getPosition().y = oldPos.y;
+                    break;
+            }
+
+            window.showMessage("Click 'Esc' to exit the room !!!");
+            core.globals.rocksArr = data;
+            core.globals.backGroundSpeed = 2;
+            core.globals.IsGameStarted = true;
+            core.gameloop();
+        });
+
+        this.ws.on("playerWait", function() {
+            window.showMessage("Wait for another player to arrive ...");
+            core.draw.drawBackround();
+            core.draw.drawScores();
+            core.draw.drawLifeBar(player1.health, 1);
+            core.draw.drawLifeBar(player2.health, 2);
+            core.draw.drawPlayers();
+            core.globals.IsSquadLeader = true;
+        });
+
+        this.ws.on("endGame", function(urlTarget) {
+            showMessage('Game aborted');
+            FPS = 0;
+            core.ws.close();
+            // window.location = urlTarget;
+        });
+
         this.ws.on("shipMoved", function(data) {
-            if (this.globals.IsGameStarted) {
-                this.globals.player2Ship.x = data.x;
-                this.globals.player2Ship.y = data.y;
+            if (core.globals.IsGameStarted) {
+                player2.moveHorizontl(data.x);
+                player2.moveVertical(data.y);
             }
         });
     };
 
     core.prototype.gameloop = function() {
-        var that = this;
+        var core = this;
         this.globals.frameCounter++;
         if (!this.globals.IsGameStarted) {
             if (this.globals.frameCounter % 60 == 0 && this.globals.frameCounter <
@@ -252,17 +245,15 @@ engine.models = {};
             this.draw.drawScores();
             this.draw.drawRocks();
             this.draw.drawBonus();
-            this.draw.drawLifeBar(this.globals.player1Ship.damageBar, 1);
-            this.draw.drawLifeBar(this.globals.player2Ship.damageBar, 2);
-            this.draw.drawPlayer(this.globals.player1Ship);
-            this.draw.drawPlayer(this.globals.player2Ship);
+            this.draw.drawLifeBar();
+            this.draw.drawPlayers();
             this.update.checkColision();
             this.update.updateBonusEffect(this.globals.player1Ship);
             this.update.updateBonusEffect(this.globals.player2Ship);
-            this.draw.drawText(this.globals.onScreenText);
+            this.draw.drawText();
         }
         window.requestAnimFrame(function() {
-            that.gameloop();
+            core.gameloop();
         });
     };
 

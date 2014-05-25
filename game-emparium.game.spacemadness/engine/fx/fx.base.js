@@ -21,10 +21,8 @@ var fx;
 
         FxBase.prototype.apply = function() {};
         
-        FxBase.prototype.clearFX = function() {
-            this.isUnderEffect = false;
-            this.fx = null;
-            document.getElementById('myCanvas').textContent = "";
+        FxBase.prototype.clearFX = function(ship) {
+            ship.fx = null;
         };
 
         return FxBase;

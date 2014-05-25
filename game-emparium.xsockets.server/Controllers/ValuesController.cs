@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
-namespace game_emparium.xsockets.server.Controllers
+namespace game_emparium.xsockets.server.Models
 {
     public class ValuesController : ApiController
     {

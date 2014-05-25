@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using game_emparium.xsockets.server.Models;
-using game_emparium.xsockets.server.Controllers;
 
 namespace game_emparium.xsockets.server.Interfaces
 {

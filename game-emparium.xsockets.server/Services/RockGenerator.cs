@@ -6,17 +6,17 @@ using System.Web;
 
 namespace game_emparium.xsockets.server.Services
 {
-    public static class RockService
+    public class RockGenerator
     {
-        static Random RandomEngine = new Random();
-        static int RockMaxX = 650;
-        static int numOfRocks = 5;
-        static int RockMinX = 150;
-        static int SpeedMax = 3;
-        static int RockSpeedFactor = 2;
-        static int SpeedPadding = 1;
+        Random RandomEngine = new Random();
+        int RockMaxX = 650;
+        int numOfRocks = 5;
+        int RockMinX = 150;
+        int SpeedMax = 3;
+        int RockSpeedFactor = 2;
+        int SpeedPadding = 1;
 
-        public static Rock[] InitRockArray()
+        public Rock[] InitRockArray()
         {
             Rock[] rockArray = new Rock[numOfRocks];
 
@@ -40,7 +40,7 @@ namespace game_emparium.xsockets.server.Services
             return rockArray;
         }
 
-        public static Rock getSingleRock(int index)
+        public Rock getSingleRock(int index)
         {
             Rock rock = new Rock()
             {
