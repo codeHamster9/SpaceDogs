@@ -28,7 +28,7 @@ namespace game_emparium.xsockets.server.Controllers
             Game game;
             games.TryRemove(GameId, out game);
             this.SendTo(p => p.GameId == GameId, null, "endGame");
-            
+
         }
         void SpaceMadness_OnOpen(object sender, OnClientConnectArgs e)
         {
@@ -48,7 +48,7 @@ namespace game_emparium.xsockets.server.Controllers
             game.Players.Add(new Player() { ConnectionID = this.ClientGuid, SquadId = GameId });
             games.TryAdd(GameId, game);
         }
-        public void JoinGame(string roomId)
+        public void JoinGame()
         {
             Player squadLeader = null;
             Player wingman = null;
@@ -62,17 +62,28 @@ namespace game_emparium.xsockets.server.Controllers
 
                 if (game.Players.Count == 2)
                 {
-                    game.Init();
-                    game.ItemGen.OnDataReady += this.ItemGen_OnDataReady;
-                    Rock[] rockArray = game.RockGen.InitRockArray();
-                    this.SendTo<SpaceMadness>(p => p.ClientGuid == squadLeader.ConnectionID, rockArray, "startGame");
-                    this.Send(rockArray, "startGame");
-                }          
+                    this.SendTo<SpaceMadness>(p => p.ClientGuid == squadLeader.ConnectionID, null, "getReady");
+                    this.Send(null, "getReady");
+                }
             }
             else
             {
                 CreateGame();
                 this.Send(null, "playerWait");
+            }
+        }
+
+        public void GameOn()
+        {
+            Game game;
+            if (games.TryGetValue(GameId, out game))
+            {
+                game.Init();
+                game.ItemGen.OnDataReady += this.ItemGen_OnDataReady;
+                Rock[] rockArray = game.RockGen.InitRockArray();
+                this.SendTo<SpaceMadness>(p => p.ClientGuid == game.Players[0].ConnectionID, rockArray, "startGame");
+                this.SendTo<SpaceMadness>(p => p.ClientGuid == game.Players[1].ConnectionID, rockArray, "startGame");
+                //this.Send(rockArray, "startGame");
             }
         }
         public void GetNewRock(int index)
