@@ -64,6 +64,34 @@ var engine, effects, common;
         }
     };
 
+    update.prototype.wingmanItemPickup = function(data) {
+        cglbl.bonusArr[data.bonusIndex].timeout = 0;
+
+        switch (data.type) {
+            case 0:
+                updateScore(1000, "wingman");
+                break;
+            case 1:
+                if (_player2.fx) {
+                    _player2.fx.clearFX(_player2);
+                }
+                _player2.fx = new fx.shield();
+                break;
+            case 2:
+                if (_player2.fx) {
+                    _player2.fx.clearFX(_player2);
+                }
+                _player2.fx = new fx.shrink(32);
+                break;
+            case 3:
+                if (_player2.fx) {
+                    _player2.fx.clearFX(_player2);
+                }
+                _player2.fx = new fx.drunk(30, _backGroundX);
+                break;
+        }
+    };
+
     update.prototype.checkColision = function() { //make more generic collidable interface;
         var i, deltax, deltay, dist, radius, shipCenter,
             center, rockCenter, collidables = [],
@@ -116,8 +144,8 @@ var engine, effects, common;
                                 this.updateScores(-500, "leader");
                                 _player1.takeHit(35);
                                 this.socket.publish("playerExplode", {
-                                        index: i
-                                    });
+                                    index: i
+                                });
                             }
                             break;
                         case "Points":

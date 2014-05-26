@@ -5,7 +5,7 @@ var engine, common;
         DEBUG = false,
         draw = (function(globals) {
 
-            function Draw(velocity,globals) {
+            function Draw(velocity, globals) {
                 imageRock = new Image();
                 imageBonus = new Image();
                 imageObjBackground = new Image();
@@ -13,12 +13,13 @@ var engine, common;
                 context = null;
                 _player1 = null;
                 _player2 = null;
-            
+                _explosionArray = new Array();
                 _backGroundSpeed = 2;
                 _velocity = velocity;
                 _socket = null;
                 _toRadians = Math.PI / 180;
                 cglbl = globals;
+
             }
             return Draw;
         }());
@@ -27,7 +28,7 @@ var engine, common;
         return canvas;
     };
 
-     draw.prototype.setSocket = function(socket) {
+    draw.prototype.setSocket = function(socket) {
         _socket = socket;
     };
 
@@ -38,6 +39,15 @@ var engine, common;
         imageObjBackground.src = "Images/space_background.jpg";
         canvas = document.getElementById('myCanvas');
         context = canvas.getContext('2d');
+
+        var i, j = 0;
+
+        for (i = 0; i < 7 * 5; i++) {
+            _explosionArray[i] = "Images/Frames/e" + (j + 1) + ".png";
+            if (i % 5 === 0) {
+                j++;
+            }
+        }
     };
 
     draw.prototype.setPlayers = function(player1, player2) {
@@ -129,7 +139,7 @@ var engine, common;
         }
     };
 
-    draw.prototype.drawScores = function(player1,player2) {
+    draw.prototype.drawScores = function(player1, player2) {
         context.fillStyle = "rgba(255,0,0,0.5)";
         context.font = 'italic bold 30px sans-serif';
         context.textBaseline = 'bottom';
@@ -222,8 +232,8 @@ var engine, common;
     draw.prototype.drawExplosion = function(ship) {
         var imageObj = new Image(),
             shipPos = ship.getPosition();
-        if (ship.frameIndex < cglbl.explosionArray.length) {
-            imageObj.src = cglbl.explosionArray[ship.frameIndex];
+        if (ship.frameIndex < _explosionArray.length) {
+            imageObj.src = _explosionArray[ship.frameIndex];
             context.drawImage(imageObj, shipPos.x - 30, shipPos.y - 30);
             ship.frameIndex++;
         } else {
