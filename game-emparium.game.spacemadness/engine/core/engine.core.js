@@ -18,8 +18,8 @@ engine.models = {};
                     },
                     itemArr: new Array(),
                     rocksArr: new Array(),
-                    player1Ship: null,
-                    player2Ship: null,
+                    _player1: null,
+                    _player2: null,
                     gameOn: false,
                     IsReadyToExit: false,
                     IsSquadLeader: false,
@@ -31,16 +31,14 @@ engine.models = {};
                     _update = null,
                     _ws = {};
 
-                function initPlayers() {
-                    _state.player1Ship = new engine.models.ship('squadLeader', 200, 430, 60, 60, 'Images/spaceship1.png');
-                    _state.player2Ship = new engine.models.ship('wingman', 700, 430, 60, 60, 'Images/spaceship2.png');
-                    _update.setPlayers(_state.player1Ship, _state.player2Ship);
-                    _draw.setPlayers(_state.player1Ship, _state.player2Ship)
+                function createPlayers() {
+                    _state._player1 = new engine.models.ship('squadLeader', 200, 430, 60, 60, 'Images/spaceship1.png');
+                    _state._player2 = new engine.models.ship('wingman', 700, 430, 60, 60, 'Images/spaceship2.png');
                 };
 
                 function gameloop() {
-                    _draw.run(_state);
-                    _update.run(_state);
+                    _draw.run();
+                    _update.run();
 
                     window.requestAnimFrame(function() {
                         gameloop();
@@ -71,7 +69,7 @@ engine.models = {};
                     });
 
                     _ws.on("wingManExplode", function(data) {
-                        _state.player2Ship.takeHit();
+                        _state._player2.takeHit();
                         // core.update.updateScores(-500, "wingman");
                     });
 
@@ -123,8 +121,8 @@ engine.models = {};
                     });
 
                     _ws.on("shipMoved", function(data) {
-                        _state.player2Ship.moveHorizontl(data.x);
-                        _state.player2Ship.moveVertical(data.y);
+                        _state._player2.moveHorizontl(data.x);
+                        _state._player2.moveVertical(data.y);
                         if (DEBUG)
                             console.log("shipMoved", data);
                     });
@@ -141,11 +139,11 @@ engine.models = {};
                         };
                     }());
 
+                    createPlayers();
                     _draw = new engine.draw(0);
+                    _draw.init(_state);
                     _update = new engine.update(840, 440);
-                    _draw.init();
-                    initPlayers();
-                    _update.init();
+                    _update.init(_state);
                     initServerConnection();
                 };
             }

@@ -71,6 +71,8 @@
     <Content Include="engine\fx\fx.base.js" />
     <Content Include="engine\fx\fx.bump.js" />
     <Content Include="engine\fx\fx.drunk.js" />
+    <Content Include="engine\fx\fx.factory.js" />
+    <Content Include="engine\fx\fx.itemfactory.js" />
     <Content Include="engine\fx\fx.shield.js" />
     <Content Include="engine\fx\fx.shrink.js" />
     <Content Include="engine\models\models.item.js" />

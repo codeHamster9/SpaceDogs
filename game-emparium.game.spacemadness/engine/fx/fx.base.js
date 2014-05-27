@@ -1,6 +1,6 @@
 ﻿function extend(subClass, superClass) {
     var F = function() {};
-    F.prototype = new F();
+    F.prototype = superClass.prototype;
     subClass.prototype = new F();
     subClass.prototype.constructor = subClass;
 
@@ -23,6 +23,7 @@ var fx;
         
         FxBase.prototype.clearFX = function(ship) {
             ship.fx = null;
+            console.log('hello from base');
         };
 
         return FxBase;

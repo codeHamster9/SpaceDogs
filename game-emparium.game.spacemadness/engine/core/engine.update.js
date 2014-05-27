@@ -1,4 +1,4 @@
-var engine, effects, common;
+var engine, fx, common;
 (function(engine) {
     //'use strict';
     var
@@ -9,9 +9,7 @@ var engine, effects, common;
                 var _socket = null,
                     _backGroundX = x,
                     _backGroundY = y,
-                    _player1 = null,
-                    _player2 = null,
-                    _coreState = null;
+                    _c = null;
 
                 this.init = function(state) {
                     if (window.addEventListener) {
@@ -21,101 +19,91 @@ var engine, effects, common;
                         window.attachEvent('onmousemove', mouseMove.bind(this));
                         window.attachEvent('onkeydown', whatKey.bind(this));
                     }
-                    _coreState = state;
+                    _c = state;
                 };
 
-                this.run = function(core) {
+                this.run = function() {
                     checkColision();
                     wingmanItemPickup();
                     updateItemEffect();
                     updateScores();
                 };
 
-                // this.setPlayers = function(player1, player2) {
-                //     _player1 = player1;
-                //     _player2 = player2;
-                // };
-
                 this.setSocket = function(socket) {
                     _socket = socket;
                 };
 
-                function updateScores(scores, value, gameOn) {
-                    if (gameOn) {
-                        if (_coreState.scores.score1 + value > 0)
-                            _coreState.scores.score1++;
+                function updateScores() {
+                    var value = _c.scorePerSecond;
+                    if (_c.gameOn) {
+                        if (_c.scores.score1 + value > 0)
+                            _c.scores.score1++;
                         else
-                            _coreState.scores.score1 = 0;
+                            _c.scores.score1 = 0;
 
-                        if (_coreState.scores.score2 + value > 0)
-                            _coreState.scores.score2++;
+                        if (_c.scores.score2 + value > 0)
+                            _c.scores.score2++;
                         else
-                            _coreState.scores.score2 = 0;
+                            _c.scores.score2 = 0;
                     }
                 };
 
-                function updateItemEffect(text) {
-                    if (_player1.fx) {
-                        _player1.fx.apply(_player1);
-                    } else {
-                        text = "";
-                    }
+                function updateItemEffect() {
 
-                    if (_player2.fx) {
-                        _player2.fx.apply(_player2);
+                    if (_c._player1.fx) {
+                        _c._player1.fx.apply(_c._player1);
                     } else {
-                        text = "";
+                        // _c.onScreenText = "";
                     }
                 };
 
-                function wingmanItemPickup(item, itemArr, scores) {
+                function wingmanItemPickup() {
+                    var item = _c.wingmanItem;
                     if (item) {
-                        itemArr[item.bonusIndex].timeout = 0;
+                        _c.itemArr[item.bonusIndex].timeout = 0;
 
+                        if (_c._player2.fx && item.type != "Points") {
+                            _c._player2.fx.clearFX(_c._player2);
+                        }
                         switch (item.type) {
-                            case 0:
-                                scores.score2 += 1000;
+
+                            case "Points":
+                                _c.scores.score2 += 1000;
                                 break;
-                            case 1:
-                                if (_player2.fx) {
-                                    _player2.fx.clearFX(_player2);
-                                }
-                                _player2.fx = new fx.shield();
+                            case "Shield":
+                                _c._player2.fx = new fx.shield();
+                                _c.onScreenText = "Shields Up!";
                                 break;
-                            case 2:
-                                if (_player2.fx) {
-                                    _player2.fx.clearFX(_player2);
-                                }
-                                _player2.fx = new fx.shrink(32);
+                            case "Shrink":
+                                _c._player2.fx = new fx.shrink(32);
+                                _c.onScreenText = "Shrink Ray!";
                                 break;
-                            case 3:
-                                if (_player2.fx) {
-                                    _player2.fx.clearFX(_player2);
-                                }
-                                _player2.fx = new fx.drunk(30, _backGroundX);
+                            case "Drunk":
+                                _c._player2.fx = new fx.drunk(30, _backGroundX);
+                                _c.onScreenText = "Drunk Driving!";
                                 break;
                         }
                     }
                 };
 
-                function checkColision(itemArr, rocksArr, scores) {
+                function checkColision() {
                     var i, deltax, deltay, dist, radius, shipCenter,
                         center, rockCenter, collidables = [],
                         buffer = 13;
 
-                    if (!_player1.isHit) {
-                        if (rocksArr && rocksArr.length > 0)
-                            collidables = rocksArr;
+                    if (!_c._player1.isHit) {
+                        if (_c.rocksArr && _c.rocksArr.length > 0)
+                            collidables = _c.rocksArr;
 
-                        if (itemArr && itemArr.length > 0)
-                            collidables = collidables.concat(itemArr);
+                        if (_c.itemArr && _c.itemArr.length > 0)
+                            collidables = collidables.concat(_c.itemArr);
 
                         // collidables = collidables.concat(_player2Ship);
 
                         if (!collidables)
                             return;
 
-                        shipCenter = _player1.getShipCenter();
+                        shipCenter = _c._player1.getShipCenter();
 
                         for (i = 0; i < collidables.length; ++i) {
 
@@ -131,58 +119,61 @@ var engine, effects, common;
                                 switch (collidables[i].type) {
                                     /* case "Ship":
                             if (!_isHelmsLocked) {
-                                if (_player1.x > _player2Ship.x) {
+                                if (_c._player1.x > _player2Ship.x) {
                                     me = true;
                                     wingman = false;
                                 } else {
                                     me = false;
                                     wingman = true;
                                 }
-                                _player1.isUnderEffect = true;
+                                _c._player1.isUnderEffect = true;
                                 _player2Ship.isUnderEffect = true;
-                                _player1.fx = new fx.bump(me);
+                                _c._player1.fx = new fx.bump(me);
                                 _player2Ship.fx = new fx.bump(wingman);
                                 _isHelmsLocked = true;
                                 console.log("player collide");
                             }*/
                                     case "Rock":
-                                        if (!_player1.shieldsUp) {
-                                            scores.score1 += -500;
-                                            _player1.takeHit(35);
+                                        if (!_c._player1.shieldsUp) {
+                                            _c.scores.score1 += -500;
+                                            _c._player1.takeHit(35);
                                             _socket.publish("playerExplode", {
                                                 index: i
                                             });
                                         }
                                         break;
                                     case "Points":
-                                        scores.score1 += 1000;
+                                        _c.scores.score1 += 1000;
 
                                         break;
                                     case "Shield":
                                     case "Shrink":
                                     case "Drunk":
-                                        if (_player1.fx) {
-                                            _player1.fx.clearFX(_player1);
+                                        if (_c._player1.fx) {
+                                            _c._player1.fx.clearFX(_c._player1);
                                         }
                                         collidables[i].timeout = 0;
                                         if (!DEBUG)
                                             console.log(collidables[i].type);
                                 }
 
-                                switch (collidables[i].type) {
-                                    case "Shield":
-                                        _player1.fx = new fx.shield();
-                                        _onScreenText = "Shields Up!";
-                                        break;
-                                    case "Shrink":
-                                        _player1.fx = new fx.shrink(32);
-                                        _onScreenText = "Shrink Ray!";
-                                        break;
-                                    case "Drunk":
-                                        _player1.fx = new fx.drunk(30, _backGroundX);
-                                        _onScreenText = "Drunk Driving!";
-                                        break;
-                                }
+                                var fxGen = new fx.itemFactory();
+                                _c._player1.fx = fxGen.getFx(collidables[i].type);
+
+                                // switch (collidables[i].type) {
+                                //     case "Shield":
+                                //         _c._player1.fx = new fx.shield();
+                                //         _c.onScreenText = "Shields Up!";
+                                //         break;
+                                //     case "Shrink":
+                                //         _c._player1.fx = new fx.shrink(32);
+                                //         _c.onScreenText = "Shrink Ray!";
+                                //         break;
+                                //     case "Drunk":
+                                //         _c._player1.fx = new fx.drunk(30, _backGroundX);
+                                //         _c.onScreenText = "Drunk Driving!";
+                                //         break;
+                                // }
                                 _socket.publish("playerTakesBonus", {
                                     type: collidables[i].type,
                                     index: i
@@ -193,44 +184,44 @@ var engine, effects, common;
                 };
 
                 function whatKey(evt) {
-                    if (!_player1.isHit && !_player1.helmslock) {
+                    if (!_c._player1.isHit && !_c._player1.helmslock) {
                         // Flag to put variables back if we hit an edge of the board.
                         var flag = 0;
 
                         // Get where the ship was before key process.
-                        _player1.oldX = _player1.x;
-                        _player1.oldY = _player1.y;
+                        _c._player1.oldX = _c._player1.x;
+                        _c._player1.oldY = _c._player1.y;
 
                         switch (evt.keyCode) {
                             case 37: // Left arrow.
-                                _player1.x = _player1.x - 30;
-                                if (_player1.x < 30) {
+                                _c._player1.x = _c._player1.x - 30;
+                                if (_c._player1.x < 30) {
                                     // If at edge, reset ship position and set flag.
-                                    _player1.x = 30;
+                                    _c._player1.x = 30;
                                     flag = 1;
                                 }
                                 break;
                             case 39: // Right arrow.
-                                _player1.x = _player1.x + 30;
-                                if (_player1.x > _backGroundX - 30) {
+                                _c._player1.x = _c._player1.x + 30;
+                                if (_c._player1.x > _backGroundX - 30) {
                                     // If at edge, reset ship position and set flag.
-                                    _player1.x = _backGroundX - 30;
+                                    _c._player1.x = _backGroundX - 30;
                                     flag = 1;
                                 }
                                 break;
                             case 40: // Down arrow
-                                _player1.y = _player1.y + 30;
-                                if (_player1.y > _backGroundY) {
+                                _c._player1.y = _c._player1.y + 30;
+                                if (_c._player1.y > _backGroundY) {
                                     // If at edge, reset ship position and set flag.
-                                    _player1.y = _backGroundY;
+                                    _c._player1.y = _backGroundY;
                                     flag = 1;
                                 }
                                 break;
                             case 38: // Up arrow 
-                                _player1.y = _player1.y - 30;
-                                if (_player1.y < 0) {
+                                _c._player1.y = _c._player1.y - 30;
+                                if (_c._player1.y < 0) {
                                     // If at edge, reset ship position and set flag.
-                                    _player1.y = 0;
+                                    _c._player1.y = 0;
                                     flag = 1;
                                 }
                                 break;
@@ -252,11 +243,11 @@ var engine, effects, common;
 
                         // If flag is set, the ship did not move.
                         // Put everything back the way it was.
-                        if (flag && !_player1.helmslock) {
-                            _player1.x = _player1.oldX;
-                            _player1.y = _player1.oldY;
+                        if (flag && !_c._player1.helmslock) {
+                            _c._player1.x = _c._player1.oldX;
+                            _c._player1.y = _c._player1.oldY;
                         } else {
-                            _socket.publish("moveShip", _player1.getPosition());
+                            _socket.publish("moveShip", _c._player1.getPosition());
                         }
                     }
                 };
@@ -267,23 +258,17 @@ var engine, effects, common;
 
                         evt.preventDefault();
 
-                        if (!_player1.isHit && !_player1.helmslock) {
+                        if (!_c._player1.isHit && !_c._player1.helmslock) {
 
-                            _player1.moveHorizontl(evt.clientX);
-                            _player1.moveVertical(evt.clientY);
-                            _socket.publish("moveShip", _player1.getPosition());
+                            _c._player1.moveHorizontl(evt.clientX);
+                            _c._player1.moveVertical(evt.clientY);
+                            _socket.publish("moveShip", _c._player1.getPosition());
                         }
                     }
                 };
             }
             return Update;
         }());
-
-
-
-
-
-
 
     engine.update = update;
 

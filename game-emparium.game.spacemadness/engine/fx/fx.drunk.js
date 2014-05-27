@@ -1,4 +1,6 @@
-﻿var fx;
+﻿
+
+var fx;
 (function(fx) {
     var fxdrunk = (function(base) {
 
@@ -7,7 +9,7 @@
             this.duration = 420;
             this.type = "drunk";
             this.amount = alcoholLvl;
-            base.prototype.constructor.call(this, this.duration, this.type);
+            FxDrunk.superclass.constructor(this, this.duration, this.type);
         }
 
         extend(FxDrunk, base);
@@ -23,9 +25,13 @@
             this.duration--;
         };
 
-        FxDrunk.prototype.clearFX = function(ship) {
-            base.prototype.clearFX(ship);
+        FxDrunk.prototype.puke =function(){
+            console.log.barth();
         };
+
+        // FxDrunk.prototype.clearFX = function(ship) {
+        //     base.prototype.clearFX(ship);
+        // };
 
         return FxDrunk;
 

@@ -11,8 +11,6 @@ var engine, common;
                     _imageObjBackground = new Image(),
                     _canvas = null,
                     _context = null,
-                    _player1 = null,
-                    _player2 = null,
                     _explosionArray = new Array(),
                     _backGroundSpeed = 0,
                     _velocity = velocity,
@@ -20,9 +18,10 @@ var engine, common;
                     _toRadians = Math.PI / 180,
                     _onScreenText = "",
                     _frameCounter = 0,
-                    _countdownTimer = 3;
+                    _countdownTimer = 3,
+                    _c = null;
 
-                this.init = function() {
+                this.init = function(state) {
                     _imageRock.src = "Images/asteroid.png";
                     _imageBonus.src = "Images/bonus1.png";
                     _imageObjBackground.src = "Images/space_background.jpg";
@@ -37,27 +36,23 @@ var engine, common;
                             j++;
                         }
                     }
+                    _c = state;
                 };
 
-                this.run = function(core) {
+                this.run = function() {
                     _frameCounter++;
                     drawBackround();
-                    drawTimer(core.gameOn);
-                    drawScores(core.scores);
-                    drawRocks(core.rocksArr);
-                    drawBonus(core.itemArr);
+                    drawTimer();
+                    drawScores();
+                    drawRocks();
+                    drawItems();
                     drawLifeBar();
-                    drawPlayers(core.IsSquadLeader);
+                    drawPlayers();
                     drawText();
                 };
 
                 this.setSocket = function(socket) {
                     _socket = socket;
-                };
-
-                this.setPlayers = function(player1, player2) {
-                    _player1 = player1;
-                    _player2 = player2;
                 };
 
                 function drawBackround() {
@@ -81,8 +76,8 @@ var engine, common;
 
                 function drawLifeBar() {
 
-                    var leader = 489 - _player1.health + 100;
-                    var wingman = 489 - _player2.health + 100;
+                    var leader = 489 - _c._player1.health + 100;
+                    var wingman = 489 - _c._player2.health + 100;
 
                     //draw bar Frame
                     _context.beginPath();
@@ -122,56 +117,54 @@ var engine, common;
                     _context.closePath();
                 };
 
-                function drawPlayers(isLeader) {
-                    if (!isLeader) {
-                        _player1.image.src = 'Images/spaceship2.png';
-                        _player2.image.src = 'Images/spaceship1.png';
+                function drawPlayers() {
+                    if (_c.IsSquadLeader) {
+                        _c._player1.image.src = 'Images/spaceship2.png';
+                        _c._player2.image.src = 'Images/spaceship1.png';
 
-                        var oldPos = _player1.getPosition();
-                        _player1.getPosition().x = _player2.getPosition().x;
-                        _player1.getPosition().y = _player2.getPosition().y;
-                        _player2.getPosition().x = oldPos.x;
-                        _player2.getPosition().y = oldPos.y;
+                        var oldPos = _c._player1.getPosition();
+                        _c._player1.getPosition().x = _c._player2.getPosition().x;
+                        _c._player1.getPosition().y = _c._player2.getPosition().y;
+                        _c._player2.getPosition().x = oldPos.x;
+                        _c._player2.getPosition().y = oldPos.y;
 
                     }
 
-                    if (_player1.isHit)
-                        drawExplosion(_player1);
+                    if (_c._player1.isHit)
+                        drawExplosion(_c._player1);
                     else {
-                        shipPosition = _player1.getPosition();
-                        _context.drawImage(_player1.image, shipPosition.x, shipPosition.y, _player1.width, _player1.height);
+                        shipPosition = _c._player1.getPosition();
+                        _context.drawImage(_c._player1.image, shipPosition.x, shipPosition.y, _c._player1.width, _c._player1.height);
                     }
 
-                    if (_player2.isHit)
-                        drawExplosion(_player2);
+                    if (_c._player2.isHit)
+                        drawExplosion(_c._player2);
                     else {
-                        shipPosition = _player2.getPosition();
-                        _context.drawImage(_player2.image, shipPosition.x, shipPosition.y, _player2.width, _player2.height);
+                        shipPosition = _c._player2.getPosition();
+                        _context.drawImage(_c._player2.image, shipPosition.x, shipPosition.y, _c._player2.width, _c._player2.height);
                     }
                 };
 
-                function drawScores(scores) {
+                function drawScores() {
                     _context.fillStyle = "rgba(255,0,0,0.5)";
                     _context.font = 'italic bold 30px sans-serif';
                     _context.textBaseline = 'bottom';
-                    _context.fillText(scores.score1, 60, 35);
-                    _context.fillText(scores.score2, 780, 35);
+                    _context.fillText(_c.scores.score1, 60, 35);
+                    _context.fillText(_c.scores.score2, 780, 35);
                 };
 
-                function drawTimer(gameOn) {
+                function drawTimer() {
                     if (_frameCounter % 60 == 0 && _countdownTimer >= 0) {
                         _countdownTimer--;
-                        console.log(_countdownTimer);
                         if (_countdownTimer === 0) {
                             _socket.publish("gameOn", {});
-                            console.log("gameOn")
                             _backGroundSpeed = 2;
-                            _player1.helmslock =false;
-                            _player2.helmslock =false;
+                            _c._player1.helmslock = false;
+                            _c._player2.helmslock = false;
                         }
                     }
 
-                    if (!gameOn) {
+                    if (!_c.gameOn) {
                         _context.fillStyle = "rgba(255,0,0,0.5)";
                         _context.font = 'italic bold 70px sans-serif';
                         _context.textBaseline = 'bottom';
@@ -179,30 +172,30 @@ var engine, common;
                     }
                 };
 
-                function drawBonus(itemArr) {
-                    if (itemArr) {
+                function drawItems() {
+                    if (_c.itemArr) {
                         var i;
-                        for (i = itemArr.length - 1; i >= 0; i--) {
-                            if (itemArr[i].timeout > 0) {
-                                _context.drawImage(_imageBonus, itemArr[i].x, itemArr[i].y);
-                                itemArr[i].timeout--;
+                        for (i = _c.itemArr.length - 1; i >= 0; i--) {
+                            if (_c.itemArr[i].timeout > 0) {
+                                _context.drawImage(_imageBonus, _c.itemArr[i].x, _c.itemArr[i].y);
+                                _c.itemArr[i].timeout--;
                             }
                         }
 
                     }
                 };
 
-                function drawRocks(rocksArr) {
-                    if (rocksArr) {
+                function drawRocks() {
+                    if (_c.rocksArr) {
                         var i = 0;
-                        for (i; i < rocksArr.length; ++i) {
-                            drawRotatedImage(_imageRock, rocksArr[i]);
-                            rocksArr[i].angle += rocksArr[i].rotationSpeed;
+                        for (i; i < _c.rocksArr.length; ++i) {
+                            drawRotatedImage(_imageRock, _c.rocksArr[i]);
+                            _c.rocksArr[i].angle += _c.rocksArr[i].rotationSpeed;
 
                             if (DEBUG) {
                                 //draw hit area
                                 _context.beginPath();
-                                _context.arc(rocksArr[i].x, rocksArr[i].y, (rocksArr[i].width / 2) - 3, 0, 2 *
+                                _context.arc(_c.rocksArr[i].x, _c.rocksArr[i].y, (_c.rocksArr[i].width / 2) - 3, 0, 2 *
                                     Math.PI, false);
                                 _context.fillStyle = "rgba(255,255,0,0.2)";
                                 _context.closePath();
@@ -211,18 +204,18 @@ var engine, common;
                                 //draw center
                                 _context.beginPath();
                                 _context.fillStyle = "rgba(255,0,0,1.5)";
-                                // _context.arc(rocksArr[i].x, rocksArr[i].y, 3, 0, 2 * Math.PI, false);
-                                _context.fillRect(rocksArr[i].x, rocksArr[i].y, 5, 5);
+                                // _context.arc(_c.rocksArr[i].x, _c.rocksArr[i].y, 3, 0, 2 * Math.PI, false);
+                                _context.fillRect(_c.rocksArr[i].x, _c.rocksArr[i].y, 5, 5);
                                 _context.closePath();
                                 _context.fill();
 
                                 //draw distance
-                                // if (_player1.life > 0) {
+                                // if (_c._player1.life > 0) {
                                 _context.beginPath();
                                 _context.fillStyle = "rgba(255,255,255,1.5)";
                                 _context.font = 'italic bold ' + 15 + 'px sans-serif';
                                 _context.textBaseline = 'center';
-                                _context.fillText(rocksArr[i].distance, rocksArr[i].x - 40, rocksArr[i].y +
+                                _context.fillText(_c.rocksArr[i].distance, _c.rocksArr[i].x - 40, _c.rocksArr[i].y +
                                     10);
                                 _context.closePath();
                                 _context.fill();
@@ -233,19 +226,19 @@ var engine, common;
                                 _context.fillStyle = "rgba(255,125,0,1.5)";
                                 _context.font = 'italic bold 15px sans-serif';
                                 _context.textBaseline = 'center';
-                                _context.fillText(rocksArr[i].x + "," + rocksArr[i].y, rocksArr[i].x + 20, rocksArr[i].y - 10);
+                                _context.fillText(_c.rocksArr[i].x + "," + _c.rocksArr[i].y, _c.rocksArr[i].x + 20, _c.rocksArr[i].y - 10);
                                 _context.closePath();
                                 _context.fill();
                             }
 
 
-                            if (rocksArr[i].y > 550) {
+                            if (_c.rocksArr[i].y > 550) {
                                 _socket.publish("getNewRock", {
                                     index: i
                                 });
                             } else {
-                                rocksArr[i].y = rocksArr[i].y + rocksArr[i].speed;
-                                rocksArr[i].center.y = rocksArr[i].cen
+                                _c.rocksArr[i].y = _c.rocksArr[i].y + _c.rocksArr[i].speed;
+                                _c.rocksArr[i].center.y = _c.rocksArr[i].cen
                             }
                         }
                     }
@@ -276,7 +269,7 @@ var engine, common;
                     _context.fillStyle = "rgba(255,0,0,0.5)";
                     _context.font = 'italic bold 35px sans-serif';
                     _context.textBaseline = 'bottom';
-                    _context.fillText(_onScreenText, _canvas.clientWidth / 2, 50);
+                    _context.fillText(_c.onScreenText, _canvas.clientWidth / 2, 50);
                 };
 
                 function drawRotatedImage(image, obj) {
