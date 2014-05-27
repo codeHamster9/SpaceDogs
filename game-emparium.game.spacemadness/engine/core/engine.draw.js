@@ -14,7 +14,7 @@ var engine, common;
                     _player1 = null,
                     _player2 = null,
                     _explosionArray = new Array(),
-                    _backGroundSpeed = 2,
+                    _backGroundSpeed = 0,
                     _velocity = velocity,
                     _socket = null,
                     _toRadians = Math.PI / 180,
@@ -42,10 +42,10 @@ var engine, common;
                 this.run = function(core) {
                     _frameCounter++;
                     drawBackround();
-                    drawTimer(core.IsGameStarted);
-                    drawScores(core.score1, core.score2);
+                    drawTimer(core.gameOn);
+                    drawScores(core.scores);
                     drawRocks(core.rocksArr);
-                    drawBonus(core.bonusArr);
+                    drawBonus(core.itemArr);
                     drawLifeBar();
                     drawPlayers(core.IsSquadLeader);
                     drawText();
@@ -150,19 +150,24 @@ var engine, common;
                     }
                 };
 
-                function drawScores(score1, score2) {
+                function drawScores(scores) {
                     _context.fillStyle = "rgba(255,0,0,0.5)";
                     _context.font = 'italic bold 30px sans-serif';
                     _context.textBaseline = 'bottom';
-                    _context.fillText(score1, 60, 35);
-                    _context.fillText(score2, 780, 35);
+                    _context.fillText(scores.score1, 60, 35);
+                    _context.fillText(scores.score2, 780, 35);
                 };
 
                 function drawTimer(gameOn) {
                     if (_frameCounter % 60 == 0 && _countdownTimer >= 0) {
                         _countdownTimer--;
+                        console.log(_countdownTimer);
                         if (_countdownTimer === 0) {
                             _socket.publish("gameOn", {});
+                            console.log("gameOn")
+                            _backGroundSpeed = 2;
+                            _player1.helmslock =false;
+                            _player2.helmslock =false;
                         }
                     }
 
@@ -174,13 +179,13 @@ var engine, common;
                     }
                 };
 
-                function drawBonus(bonusArr) {
-                    if (bonusArr) {
+                function drawBonus(itemArr) {
+                    if (itemArr) {
                         var i;
-                        for (i = bonusArr.length - 1; i >= 0; i--) {
-                            if (bonusArr[i].timeout > 0) {
-                                _context.drawImage(_imageBonus, bonusArr[i].x, bonusArr[i].y);
-                                bonusArr[i].timeout--;
+                        for (i = itemArr.length - 1; i >= 0; i--) {
+                            if (itemArr[i].timeout > 0) {
+                                _context.drawImage(_imageBonus, itemArr[i].x, itemArr[i].y);
+                                itemArr[i].timeout--;
                             }
                         }
 

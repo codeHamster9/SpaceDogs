@@ -40,7 +40,7 @@
             this.width = width;
             this.height = height;
             this.type = "Ship";
-            this.helmslock = false;
+            this.helmslock = true;
             this.health = 489;
             this.frameIndex = 0;
             this.isHit = false;

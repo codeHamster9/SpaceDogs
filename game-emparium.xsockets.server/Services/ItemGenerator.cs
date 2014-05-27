@@ -58,7 +58,7 @@ namespace game_emparium.xsockets.server.Services
         private void TimeElapsed(object sender, ElapsedEventArgs e)
         {
             GenerateItems();
-            itemTimer.Interval = Math.Floor(RandomEngine.NextDouble() * 30000) + 3000;
+            itemTimer.Interval = Math.Floor(RandomEngine.NextDouble() * 30000) + 30000;
 #if DEBUG
             Debug.WriteLine("Interval :" + itemTimer.Interval);
 #endif

@@ -10,9 +10,10 @@ var engine, effects, common;
                     _backGroundX = x,
                     _backGroundY = y,
                     _player1 = null,
-                    _player2 = null;
+                    _player2 = null,
+                    _coreState = null;
 
-                this.init = function() {
+                this.init = function(state) {
                     if (window.addEventListener) {
                         window.addEventListener('mousemove', mouseMove.bind(this), false);
                         window.addEventListener('keydown', whatKey.bind(this), false);
@@ -20,58 +21,60 @@ var engine, effects, common;
                         window.attachEvent('onmousemove', mouseMove.bind(this));
                         window.attachEvent('onkeydown', whatKey.bind(this));
                     }
+                    _coreState = state;
                 };
 
                 this.run = function(core) {
-                    checkColision(core.bonusArr, core.rocksArr);
-                    wingmanItemPickup(core.wingmanItem, core.bonusArr);
+                    checkColision();
+                    wingmanItemPickup();
                     updateItemEffect();
                     updateScores();
                 };
 
-                this.setPlayers = function(player1, player2) {
-                    _player1 = player1;
-                    _player2 = player2;
-                };
+                // this.setPlayers = function(player1, player2) {
+                //     _player1 = player1;
+                //     _player2 = player2;
+                // };
 
                 this.setSocket = function(socket) {
                     _socket = socket;
                 };
 
-                function updateScores(score1, score2, value) {
+                function updateScores(scores, value, gameOn) {
+                    if (gameOn) {
+                        if (_coreState.scores.score1 + value > 0)
+                            _coreState.scores.score1++;
+                        else
+                            _coreState.scores.score1 = 0;
 
-                    if (score1 += value > 0)
-                        score1 += value;
-                    else
-                        score1 = 0;
-
-                    if (score2 += value > 0)
-                        score2 += value;
-                    else
-                        score2 = 0;
+                        if (_coreState.scores.score2 + value > 0)
+                            _coreState.scores.score2++;
+                        else
+                            _coreState.scores.score2 = 0;
+                    }
                 };
 
-                function updateItemEffect() {
+                function updateItemEffect(text) {
                     if (_player1.fx) {
                         _player1.fx.apply(_player1);
                     } else {
-                        // cglbl.onScreenText = "";
+                        text = "";
                     }
 
                     if (_player2.fx) {
                         _player2.fx.apply(_player2);
                     } else {
-                        // cglbl.onScreenText = "";
+                        text = "";
                     }
                 };
 
-                function wingmanItemPickup(item, itemArr) {
+                function wingmanItemPickup(item, itemArr, scores) {
                     if (item) {
                         itemArr[item.bonusIndex].timeout = 0;
 
                         switch (item.type) {
                             case 0:
-                                updateScore(1000, "wingman");
+                                scores.score2 += 1000;
                                 break;
                             case 1:
                                 if (_player2.fx) {
@@ -95,7 +98,7 @@ var engine, effects, common;
                     }
                 };
 
-                function checkColision(bonusArr, rocksArr) {
+                function checkColision(itemArr, rocksArr, scores) {
                     var i, deltax, deltay, dist, radius, shipCenter,
                         center, rockCenter, collidables = [],
                         buffer = 13;
@@ -104,8 +107,8 @@ var engine, effects, common;
                         if (rocksArr && rocksArr.length > 0)
                             collidables = rocksArr;
 
-                        if (bonusArr && bonusArr.length > 0)
-                            collidables = collidables.concat(bonusArr);
+                        if (itemArr && itemArr.length > 0)
+                            collidables = collidables.concat(itemArr);
 
                         // collidables = collidables.concat(_player2Ship);
 
@@ -144,7 +147,7 @@ var engine, effects, common;
                             }*/
                                     case "Rock":
                                         if (!_player1.shieldsUp) {
-                                            updateScores(-500, "leader");
+                                            scores.score1 += -500;
                                             _player1.takeHit(35);
                                             _socket.publish("playerExplode", {
                                                 index: i
@@ -152,7 +155,7 @@ var engine, effects, common;
                                         }
                                         break;
                                     case "Points":
-                                        updateScores(1000, "leader");
+                                        scores.score1 += 1000;
 
                                         break;
                                     case "Shield":

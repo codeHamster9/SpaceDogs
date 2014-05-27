@@ -8,18 +8,19 @@ engine.models = {};
 
             function Core() {
                 var _state = {
-                    // move to draw module
-
+                    
                     maxDamage: 420,
                     rockHitVal: 35,
-
-                    bonusArr: [],
-                    rocksArr: [],
-                    score1: 0,
-                    score2: 0,
+                    scorePerSecond: 1,
+                    scores: {
+                        score1: 0,
+                        score2: 0
+                    },
+                    itemArr: new Array(),
+                    rocksArr: new Array(),
                     player1Ship: null,
                     player2Ship: null,
-                    IsGameStarted: false,
+                    gameOn: false,
                     IsReadyToExit: false,
                     IsSquadLeader: false,
                     FPS: 1000 / 30,
@@ -47,14 +48,14 @@ engine.models = {};
                 };
 
                 function initServerConnection() {
-                    url = 'ws://localhost:4502',
-                    controller = '/SpaceMadness',
-                    settings = {
-                        gameId: '22'
-                    };
+                    var url = 'ws://localhost:4502',
+                        controller = '/SpaceMadness',
+                        settings = {
+                            gameId: '22'
+                        };
 
-                    // _ws = new XSockets.WebSocket(url + controller + '?gameId=' + settings.gameId);
-                    _ws = new XSockets.WebSocket('ws://localhost:4502/SpaceMadness?gameId=22');
+                    _ws = new XSockets.WebSocket(url + controller + '?gameId=' + settings.gameId);
+                    // _ws = new XSockets.WebSocket('ws://localhost:4502/SpaceMadness?gameId=22');
 
                     _ws.on(XSockets.Events.open, function(data) {
                         console.log('Open', data);
@@ -62,6 +63,7 @@ engine.models = {};
                         _ws.publish("joinGame", {});
                         _draw.setSocket(_ws);
                         _update.setSocket(_ws);
+
                     });
 
                     _ws.on(XSockets.Events.close, function(data) {
@@ -69,7 +71,7 @@ engine.models = {};
                     });
 
                     _ws.on("wingManExplode", function(data) {
-                        player2.takeHit();
+                        _state.player2Ship.takeHit();
                         // core.update.updateScores(-500, "wingman");
                     });
 
@@ -91,7 +93,7 @@ engine.models = {};
                     });
 
                     _ws.on("setItemsData", function(data) {
-                        _state.bonusArr = data;
+                        _state.itemArr = data;
 
                         if (DEBUG)
                             console.warn(common.utils.timeNow(), data);
@@ -99,7 +101,7 @@ engine.models = {};
 
                     _ws.on("startGame", function(data) {
                         _state.rocksArr = data;
-                        _state.IsGameStarted = true;
+                        _state.gameOn = true;
                     });
 
                     _ws.on("getReady", function() {
@@ -115,20 +117,30 @@ engine.models = {};
 
                     _ws.on("endGame", function(urlTarget) {
                         showMessage('Game aborted');
-                        FPS = 0;
+                        _state.FPS = 0;
                         _ws.close();
                         // window.location = urlTarget;
                     });
 
                     _ws.on("shipMoved", function(data) {
-                        player2.moveHorizontl(data.x);
-                        player2.moveVertical(data.y);
+                        _state.player2Ship.moveHorizontl(data.x);
+                        _state.player2Ship.moveVertical(data.y);
                         if (DEBUG)
                             console.log("shipMoved", data);
                     });
                 };
 
                 this.startEngine = function() {
+
+                    window.requestAnimFrame = (function() {
+                        return window.requestAnimationFrame ||
+                            window.webkitRequestAnimationFrame ||
+                            window.mozRequestAnimationFrame ||
+                            function(callback) {
+                                window.setInterval(gameLoop, _state.FPS);
+                        };
+                    }());
+
                     _draw = new engine.draw(0);
                     _update = new engine.update(840, 440);
                     _draw.init();
