@@ -144,36 +144,16 @@ var engine, fx, common;
                                         break;
                                     case "Points":
                                         _c.scores.score1 += 1000;
-
                                         break;
-                                    case "Shield":
-                                    case "Shrink":
-                                    case "Drunk":
-                                        if (_c._player1.fx) {
-                                            _c._player1.fx.clearFX(_c._player1);
-                                        }
+                                    default:
                                         collidables[i].timeout = 0;
+                                        var fxGen = new fx.itemFactory();
+                                        _c._player1.fx = fxGen.getFx(collidables[i].type);
                                         if (!DEBUG)
                                             console.log(collidables[i].type);
                                 }
 
-                                var fxGen = new fx.itemFactory();
-                                _c._player1.fx = fxGen.getFx(collidables[i].type);
 
-                                // switch (collidables[i].type) {
-                                //     case "Shield":
-                                //         _c._player1.fx = new fx.shield();
-                                //         _c.onScreenText = "Shields Up!";
-                                //         break;
-                                //     case "Shrink":
-                                //         _c._player1.fx = new fx.shrink(32);
-                                //         _c.onScreenText = "Shrink Ray!";
-                                //         break;
-                                //     case "Drunk":
-                                //         _c._player1.fx = new fx.drunk(30, _backGroundX);
-                                //         _c.onScreenText = "Drunk Driving!";
-                                //         break;
-                                // }
                                 _socket.publish("playerTakesBonus", {
                                     type: collidables[i].type,
                                     index: i

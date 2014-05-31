@@ -1,0 +1,28 @@
+<div class="container-view">
+    <div class="header-panel">
+        <div class="inner-panel">
+            <span>Darcy Naders Game Emporium</span>
+            <button class="btnlogin btn" ng-click="open()">login</button>
+        </div>
+    </div>
+    <div class="right-panel">
+        <div class="inner-panel">
+            <ul class="game-list">
+                <li ng-repeat="room in rooms">{{game.name}}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="left-panel">
+        <div class="inner-panel">
+            <div ng-show="selectedRoom">
+                <textarea name="" id="" cols="30" rows="10"></textarea>
+                <input type="text" name="" id="">
+                <button></button>
+            </div>
+
+        </div>
+    </div>
+    <div class="footer-panel">
+        <div class="inner-panel"></div>
+    </div>
+</div>
