@@ -1,0 +1,24 @@
+.chat {
+    height: 60%;
+}
+ .chat:after {
+    display: table;
+    content:" ";
+    clear:both;
+} 
+.chatArea {
+    display: block;
+}
+.chatLine {
+    float: left;
+    /*display: block;*/
+}
+.chatBtn {
+}
+.button-panel {
+    float:left;
+    width:50%;
+}
+.left-panel > .inner-panel {
+    width:50%;
+}
