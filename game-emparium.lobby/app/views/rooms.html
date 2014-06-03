@@ -14,10 +14,14 @@
     </div>
     <div class="left-panel">
         <div class="inner-panel">
-            <div ng-show="selectedRoom">
-                <textarea name="" id="" cols="30" rows="10"></textarea>
-                <input type="text" name="" id="">
-                <button></button>
+            <div class="chat" ng-show="!selectedRoom">
+                <textarea class="chatArea" cols="30" rows="10"></textarea>
+                <input class="chatLine" type="text" name="" id="">
+                <button class="chatBtn">Send</button>
+            </div>
+            <div class="button-panel">
+                <button>Ready</button>
+                <button>Start</button>
             </div>
 
         </div>
