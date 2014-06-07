@@ -1,4 +1,4 @@
-//'use strict'
+'use strict'
 angular.module('game.browser').directive('gelisten',
     function() {
         var _scope,
@@ -14,7 +14,7 @@ angular.module('game.browser').directive('gelisten',
             //     background: '@'
             // }, // {} = isolate, true = child, false/undefined = no change
             // controller: function($scope, $element, $attrs, $transclude) {},
-            // require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
+            // require: '^getrigger', // Array = multiple requires, ? = optional, ^ = check parent elements
             // restrict: 'A', // E = Element, A = Attribute, C = Class, M = Comment
             //template: '<img  src={{url}} ng-click="do({name:url})"></img>',
             // templateUrl: '',
@@ -22,13 +22,11 @@ angular.module('game.browser').directive('gelisten',
             // transclude: true,
             // compile: function(tElement, tAttrs, function transclude(function(scope, cloneLinkingFn){ return function linking(scope, elm, attrs){}})),
             link: function($scope, iElm, iAttrs, controller) {
-                _scope = $scope;
-                _element = iElm;
-                _attr = iAttrs;
-                $scope.$on("triggered", function(ev, text) {
-                    var callback = _attr.gelisten;
-                    _element[0].src = _scope[callback].call(_scope, text);
-                });
+
+                $scope.$watch('background', function(newValue, oldValue) {
+
+                    console.log(newValue, oldValue);
+                })
             }
         };
     }

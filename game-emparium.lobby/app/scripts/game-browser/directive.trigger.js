@@ -1,4 +1,4 @@
-//'use strict'
+'use strict'
 angular.module('game.browser').directive('getrigger', ['$rootScope',
     function($rootScope) {
         // Runs during compile
@@ -6,10 +6,12 @@ angular.module('game.browser').directive('getrigger', ['$rootScope',
             // name: '',
             // priority: 1,
             // terminal: true,
-            scope: {
-                background: '='
-            }, // {} = isolate, true = child, false/undefined = no change
-            // controller: function($scope, $element, $attrs, $transclude) {},
+            // scope: {
+            //     background: '='
+            // }, // {} = isolate, true = child, false/undefined = no change
+            // controller: function($scope, $element, $attrs, $transclude) {
+            //     this.background = "";
+            // },
             // require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
             // restrict: 'A', // E = Element, A = Attribute, C = Class, M = Comment
             // template: '',
@@ -20,9 +22,12 @@ angular.module('game.browser').directive('getrigger', ['$rootScope',
             link: function($scope, iElm, iAttrs, controller) {
                 var ev = iAttrs.getrigger;
 
-                iElm.bind(ev, function(event) {
-                    $rootScope.$broadcast('triggered',this.textContent);
-                });
+                iElm.bind(ev, handler.bind($scope));
+
+                function handler(event) {
+                    // body...
+                    this.$parent.background = event.toElement.innerText;
+                }
             }
         };
     }

@@ -1,6 +1,8 @@
 /*
-* game-browser Module
-*
-* Description
-*/
+ * game-browser Module
+ *
+ * Description
+ */
+'use strict'
+
 angular.module('game.browser', ['ui.bootstrap']);
