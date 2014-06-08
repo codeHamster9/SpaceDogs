@@ -1,7 +1,22 @@
-Space Madness
-------------------
+Game Emporium (work in progress)
+---------------------------------
 
-old School 2D shooter with 2player online co-op Mode
 
-using html5 canvas + Xsockets
-oop javascript
+* lobby : a web arcade written in angular.
+
+* server : .net backend + Xsockets for real time duties.
+
+* spaceMadness : first game built for the arcade,  
+                 2D shooter with 2player online co-op Mode ,
+                 using html5 canvas + oop javascript
+  
+  
+  TODO's 
+  
+  1) add db for player stat presistence.
+  
+  2) add social log-in.
+  
+  3) enhance the lobby ui/ux.
+  
+  4) add more games :).
