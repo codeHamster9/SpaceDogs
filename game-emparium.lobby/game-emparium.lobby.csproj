@@ -249,7 +249,6 @@
     <Content Include="karma.conf.js" />
     <Content Include="test\runner.html" />
     <Content Include="test\spec\controllers\main.js" />
-    <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -391,12 +390,6 @@
     <Content Include="package.json" />
     <Content Include="test\.jshintrc" />
     <Content Include=".bowerrc" />
-    <None Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="app\bower_components\jquery\src\sizzle\" />

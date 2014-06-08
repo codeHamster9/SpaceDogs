@@ -3,6 +3,6 @@
  *
  * Description
  */
-'use strict'
+'use strict';
 
 angular.module('game.browser', ['ui.bootstrap']);

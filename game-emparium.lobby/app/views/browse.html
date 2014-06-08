@@ -1,3 +1,4 @@
+\
 <div class="container-view">
     <div class="header-panel">
         <div class="inner-panel">
@@ -8,13 +9,13 @@
     <div class="right-panel">
         <div class="inner-panel">
             <ul class="game-list">
-                <li getrigger="mouseenter" ng-repeat="game in games">{{game.name}}</li>
+                <li ge-onevent='{ev:"mouseenter",handler:setBackground}' ng-repeat="game in games">{{game.name}}</li>
             </ul>
         </div>
     </div>
     <div class="left-panel">
         <div class="inner-panel">
-            <img gelisten="setBackground">
+            <img src={{background.url}} ng-click="clickImage()">
         </div>
     </div>
     <div class="footer-panel">

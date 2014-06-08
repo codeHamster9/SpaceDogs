@@ -69,13 +69,17 @@
 
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
     <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
-    <script src="scripts/app.js"></script>
+    <script src="3rd-party/XSockets.latest.min.js"></script>
+    <script src="3rd-party/XSockets.angularJS.js"></script>
+    <script src="scripts/common/game.common.js"></script>
+    <script src="scripts/common/directive.ge-onevent.js"></script>
     <script src="scripts/game-browser/game.browser.js"></script>
     <script src="scripts/game-browser/ctrl.browser.js"></script>
-    <script src="scripts/game-browser/directive.trigger.js"></script>
-    <script src="scripts/game-browser/directive.listen.js"></script>
     <script src="scripts/game-rooms/game.rooms.js"></script>
     <script src="scripts/game-rooms/ctrl.rooms.js"></script>
+    <script src="scripts/game-rooms/factory.rooms.js"></script>
+    <script src="scripts/game-rooms/service.rooms.js"></script>
+    <script src="scripts/app.js"></script>
 
     <!-- endbuild -->
 </body>

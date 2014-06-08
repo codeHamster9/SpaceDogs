@@ -1,5 +1,7 @@
 .chat {
     height: 60%;
+    width:55%;
+    float:left;
 }
  .chat:after {
     display: table;
@@ -21,4 +23,10 @@
 }
 .left-panel > .inner-panel {
     width:50%;
+}
+
+.players-pane {
+
+    float:left;
+    width:40%;
 }

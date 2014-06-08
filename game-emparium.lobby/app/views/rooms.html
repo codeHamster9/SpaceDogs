@@ -8,16 +8,23 @@
     <div class="right-panel">
         <div class="inner-panel">
             <ul class="game-list">
-                <li ng-repeat="room in rooms">{{game.name}}</li>
+                <li ng-repeat="room in rooms" ng-click="roomEnter(room)">{{room.name}} / {{room.players.length}}</li>
             </ul>
         </div>
     </div>
     <div class="left-panel">
-        <div class="inner-panel">
-            <div class="chat" ng-show="!selectedRoom">
+        <div class="inner-panel" ng-show="selectedRoom">
+            <div class="chat">
                 <textarea class="chatArea" cols="30" rows="10"></textarea>
                 <input class="chatLine" type="text" name="" id="">
                 <button class="chatBtn">Send</button>
+            </div>
+            <div class="players-pane">
+                <div ng-repeat="player in selectedRoom.players">
+                    <span>{{player.name}}</span>
+                    <span>{{player.rank}}</span>
+                    <input type="checkbox" ng-model="player.rdy" ng-change="onChange(player.rdy)">
+                </div>
             </div>
             <div class="button-panel">
                 <button>Ready</button>

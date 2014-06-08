@@ -6,21 +6,27 @@ angular.module('gameEmpariumlobbyApp', [
     'ngSanitize',
     'ngRoute',
     'game.browser',
-    'game.rooms'
+    'game.rooms',
+    'game.common',
+    'xsockets.angular'
 
 ])
-    .config(function($routeProvider) {
-        $routeProvider
-            .when('/', {
-                templateUrl: 'views/browse.html',
-                controller: 'ctrl.browser'
-            })
-            .when('/rooms', {
-                templateUrl: 'views/rooms.html',
-                controller: 'ctrl.rooms'
-            })
+    .config(['$locationProvider', '$routeProvider', 'xsocketsProvider',
+        function($locationProvider, $routeProvider, $xsocketsProvider) {
 
-        .otherwise({
-            redirectTo: '/'
-        });
-    });
+            $xsocketsProvider.setUrl("ws://localhost:4502/LobbyController");
+
+            $routeProvider
+                .when('/', {
+                    templateUrl: 'views/browse.html',
+                    controller: 'ctrl.browser'
+                })
+                .when('/rooms/:gameId', {
+                    templateUrl: 'views/rooms.html',
+                    controller: 'ctrl.rooms'
+                })
+                .otherwise({
+                    redirectTo: '/'
+                });
+        }
+    ]);
